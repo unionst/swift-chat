@@ -4,7 +4,7 @@
 
 The Messages app, as a SwiftUI view.
 
-[swiftchat.app](https://swiftchat.app) · [Documentation](https://www.swiftipedia.org/documentation/unionchat) · [llms.txt](https://swiftchat.app/llms.txt) · by [Union St](https://unionst.com)
+[swift-chat.dev](https://swift-chat.dev) · [Documentation](https://www.swiftipedia.org/documentation/unionchat) · [llms.txt](https://swift-chat.dev/llms.txt) · by [Union St](https://unionst.com)
 
 <img src="assets/swift-chat.png" width="320" alt="A Swift Chat conversation on iPhone">
 
@@ -229,11 +229,11 @@ Chat(conversation.messages) { message in
 
 ## For AI coding agents
 
-Swift Chat publishes an [llms.txt](https://swiftchat.app/llms.txt) and a [full reference](https://swiftchat.app/llms-full.txt). If you are using Claude Code, Cursor, Codex, or another agent, paste this:
+Swift Chat publishes an [llms.txt](https://swift-chat.dev/llms.txt) and a [full reference](https://swift-chat.dev/llms-full.txt). If you are using Claude Code, Cursor, Codex, or another agent, paste this:
 
 ```
 Add Swift Chat to this iOS app. Package URL https://github.com/unionst/swift-chat.git,
-product "SwiftChat", iOS 18+. Read https://swiftchat.app/llms-full.txt first, then build the
+product "SwiftChat", iOS 18+. Read https://swift-chat.dev/llms-full.txt first, then build the
 conversation screen with Chat(messages) { Message($0.text, role: $0.role, timestamp: $0.sentAt) }
 and wire sending with .onChatSend.
 ```

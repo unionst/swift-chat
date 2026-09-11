@@ -6,10 +6,10 @@ Install: https://github.com/unionst/swift-chat.git (product "SwiftChat"). `impor
 
 ## Docs
 
-- [Full reference](https://swiftchat.app/llms-full.txt): every initializer and modifier with examples
+- [Full reference](https://swift-chat.dev/llms-full.txt): every initializer and modifier with examples
 - [README](https://github.com/unionst/swift-chat#readme): quick start and feature list
 - [API documentation](https://www.swiftipedia.org/documentation/unionchat): generated symbol docs
-- [Website](https://swiftchat.app)
+- [Website](https://swift-chat.dev)
 
 ## Minimal example
 
