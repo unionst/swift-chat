@@ -29,8 +29,7 @@ Swift Chat is a drop-in chat transcript for iOS. Hand it your messages and it re
 ## Requirements
 
 - iOS 18 or later
-- Xcode 16 or later
-- Swift 6.1 or later
+- Xcode 26.1 or later. The binary's module interface is built with Swift 6.2, and an older compiler cannot read it.
 
 ## Installation
 
@@ -102,6 +101,8 @@ struct ChatMessage: Identifiable {
 
 `Chat` accepts any `RandomAccessCollection` of `Identifiable` values plus a closure that turns each one into a `Message`. Your model stays yours; nothing has to conform to a protocol.
 
+Swift Chat has no package dependencies of its own. The binary carries everything it needs, so there is nothing else to add, link, or embed.
+
 ### Declarative form
 
 Messages can also be written out directly, with the same conditionals and loops you use in SwiftUI:
@@ -119,6 +120,10 @@ Chat {
     }
 }
 ```
+
+### Identity
+
+Every row is keyed by a `Message.id`. In the collection form above, and inside a `ForEach`, that id is your element's own `id`, so it stays stable as long as your model's does. A `Message` written out bare in the declarative form gets a fresh identity on every render; set its `id` yourself when you rebuild it across renders and want the row to keep its place, its height, and its delivery label.
 
 ### Roles
 
@@ -171,6 +176,8 @@ MessageMedia.poll(question: String, options: [String], votes: [Int]? = nil)
 
 Pass width and height for images to get correctly sized placeholders with no layout shift. Pass a BlurHash to show a blurred preview while the image loads.
 
+`image(url:)` takes `https:`, `file:`, and `data:` URLs. A `data:` URL is decoded in place, so an inline base64 photo renders and opens full screen like any other; network images are cached on disk, local files are read directly.
+
 ## Chat modifiers
 
 All of these are ordinary SwiftUI view modifiers applied to `Chat`.
@@ -183,7 +190,7 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `onChatTypingChanged { isTyping in }` | Fires as the user starts and stops typing, for sending typing events to your server |
 | `chatTypingIndicators(_:)` | Shows typing dots for the given `[ChatRole]` |
 | `chatHeader { }` | A SwiftUI view pinned above the transcript |
-| `chatEmptyView { }` | What to show when there are no messages |
+| `chatEmptyView { }` | What to show when there are no messages. Laid out at the transcript's width, so text wraps. |
 | `chatAutoscrollBehavior(_:)` | `.whenAtBottom` (default), `.always`, or `.never`. A scroll-to-bottom button appears when needed. |
 | `chatLoadsOlderMessages { }` | Async loader called at the top of the transcript. Return `false` when nothing older remains. |
 | `onChatScrollEdge(_:perform:)` | Callback when the reader reaches the top or bottom edge |
@@ -226,6 +233,10 @@ Chat(conversation.messages) { message in
     }
 }
 ```
+
+## UI testing
+
+The input bar's trailing button carries a stable accessibility identifier: `chat.send` while it sends, `chat.dictate` while the field is empty and it starts dictation. Its accessibility label is "Send" or "Dictate" to match.
 
 ## For AI coding agents
 
