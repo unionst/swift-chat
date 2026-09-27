@@ -3,7 +3,7 @@ import SwiftUI
 
 struct EmptyDemo: View {
     @State private var conversation = Conversation(
-        partner: People.alex,
+        partner: People.ben,
         replies: SampleThreads.replies
     )
 
@@ -13,12 +13,12 @@ struct EmptyDemo: View {
                 ContentUnavailableView(
                     "No messages yet",
                     systemImage: "bubble.left.and.bubble.right",
-                    description: Text("Say hello to Alex. They’ll write back.")
+                    description: Text("Say hello to Ben. He’ll write back.")
                 )
             }
             .chatInputPlaceholder("Message")
             .chatHeader {
-                ChatHeader(title: "Alex", avatarURL: People.alexAvatar)
+                BenHeader()
             }
     }
 }

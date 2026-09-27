@@ -8,6 +8,7 @@ struct DemoMessage: Identifiable, Hashable {
     var sentAt: Date
     var status: ChatDeliveryStatus?
     var media: [MessageMedia]
+    var reactions: [ChatReaction]
 
     init(
         id: UUID = UUID(),
@@ -15,7 +16,8 @@ struct DemoMessage: Identifiable, Hashable {
         role: ChatRole,
         sentAt: Date = .now,
         status: ChatDeliveryStatus? = nil,
-        media: [MessageMedia] = []
+        media: [MessageMedia] = [],
+        reactions: [ChatReaction] = []
     ) {
         self.id = id
         self.text = text
@@ -23,5 +25,6 @@ struct DemoMessage: Identifiable, Hashable {
         self.sentAt = sentAt
         self.status = status
         self.media = media
+        self.reactions = reactions
     }
 }

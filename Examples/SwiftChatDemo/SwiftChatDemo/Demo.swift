@@ -23,11 +23,11 @@ enum Demo: String, CaseIterable, Identifiable {
 
     var summary: String {
         switch self {
-        case .conversation: "Sending, delivery receipts, typing dots, and a reply"
+        case .conversation: "Sending, receipts, typing dots, tapbacks, and a copy menu"
         case .group: "Avatars and names appear once three people are in the thread"
         case .history: "Older messages load as you reach the top"
-        case .attachments: "Photos, a location, and a poll"
-        case .tinted: "Outgoing bubbles and the input bar in a brand color"
+        case .attachments: "Photos, a collage, and a plus button for photos and files"
+        case .tinted: "Outgoing bubbles in a brand color"
         case .empty: "What a new conversation shows before the first message"
         }
     }

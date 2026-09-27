@@ -11,6 +11,8 @@ final class Conversation {
     private var replies: [String]
     private var olderPagesLeft: Int
 
+    private static let me = ChatReaction.Person(id: "me", name: "You")
+
     init(
         messages: [DemoMessage] = [],
         partner: ChatRole? = nil,
@@ -51,6 +53,39 @@ final class Conversation {
         messages.insert(contentsOf: SampleThreads.olderPage(before: oldest), at: 0)
         olderPagesLeft -= 1
         return olderPagesLeft > 0
+    }
+
+    func toggleReaction(_ emoji: String, on id: UUID) {
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+
+        let hadSame = messages[index].reactions.contains { $0.isMine && $0.emoji == emoji }
+        var reactions = messages[index].reactions.compactMap { reaction -> ChatReaction? in
+            guard reaction.isMine else { return reaction }
+            let others = reaction.people.filter { $0.id != Self.me.id }
+            return others.isEmpty ? nil : ChatReaction(emoji: reaction.emoji, people: others, isMine: false)
+        }
+
+        if !hadSame {
+            if let existing = reactions.firstIndex(where: { $0.emoji == emoji }) {
+                reactions[existing] = ChatReaction(
+                    emoji: emoji,
+                    people: reactions[existing].people + [Self.me],
+                    isMine: true
+                )
+            } else {
+                reactions.append(ChatReaction(emoji: emoji, people: [Self.me], isMine: true))
+            }
+        }
+
+        messages[index].reactions = reactions
+    }
+
+    func text(of id: UUID) -> String? {
+        messages.first { $0.id == id }?.text
+    }
+
+    func reactions(on id: UUID) -> [ChatReaction] {
+        messages.first { $0.id == id }?.reactions ?? []
     }
 
     private func setStatus(_ status: ChatDeliveryStatus, for id: UUID) {

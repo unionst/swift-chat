@@ -9,7 +9,7 @@ struct AttachmentsDemo: View {
             .chatInputPlaceholder("Message")
             .chatInputCapabilities([.photoLibrary, .files])
             .chatHeader {
-                ChatHeader(title: "Alex", avatarURL: People.alexAvatar)
+                BenHeader()
             }
     }
 }

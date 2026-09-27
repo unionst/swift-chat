@@ -14,7 +14,7 @@ struct HistoryDemo: View {
                 await conversation.loadOlderPage()
             }
             .chatHeader {
-                ChatHeader(title: "Alex", avatarURL: People.alexAvatar)
+                BenHeader()
             }
     }
 }

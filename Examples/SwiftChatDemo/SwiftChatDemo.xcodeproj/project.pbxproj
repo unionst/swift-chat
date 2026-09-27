@@ -11,15 +11,19 @@
 		2E2C0C89D0722DC243BD5E90 /* SwiftChat in Frameworks */ = {isa = PBXBuildFile; productRef = B2A0E87F165C139C715B858E /* SwiftChat */; };
 		2F02211906509A252CD36DF9 /* SwiftChatDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB690B725BC736B04E3F57EA /* SwiftChatDemoApp.swift */; };
 		3F4388E82BDCDEA0D0E422BD /* SampleThreads.swift in Sources */ = {isa = PBXBuildFile; fileRef = E680EC0840211B423FBA925A /* SampleThreads.swift */; };
+		54729615BC515F740024C3FF /* BenHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F78B6446CF10D90B952EEF /* BenHeader.swift */; };
 		5EA50472BBF53217D45C16BC /* HistoryDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CEF02E0A409EBBE51F9589 /* HistoryDemo.swift */; };
 		659C16A19980E47A09998F06 /* DemoList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47057ED3B8A6B47174132EC1 /* DemoList.swift */; };
 		74DA53A350A7DB2E9DCAF453 /* ConversationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E0A003BFF8DC8F79355EE0 /* ConversationDemo.swift */; };
 		813CAF5DF8F8B99593811E41 /* DemoMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FB359325879ACD6240A798 /* DemoMessage.swift */; };
 		8DC73E6934906AE1781B42F1 /* DemoDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5717982BD8F75BB38A8E75D2 /* DemoDestination.swift */; };
+		99FBA294BBC482900260099A /* MessageMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69800184601B1FB45A0FF04E /* MessageMenu.swift */; };
+		9D84E963A3B525FB0D95A638 /* PersonAvatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A829D8A9E5D94A57733890E /* PersonAvatar.swift */; };
 		A131654AD17369F5182BEBF6 /* DemoTranscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310DCDF2AD4C2925E7C4403 /* DemoTranscript.swift */; };
 		A326E6B654EDAC79A8D069CB /* DemoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3750738EE0575DDD74CDDF4 /* DemoRow.swift */; };
 		A522595215F7F1B96795A45C /* GroupDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67334F85CBAA4B472C36F583 /* GroupDemo.swift */; };
 		CDB554CEF44F0F83280BDE95 /* TintedDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713994DBB49E815139AD4415 /* TintedDemo.swift */; };
+		D47E01E10006AD033674E7D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA2FEA23702CA3F889A6912C /* Assets.xcassets */; };
 		E20EEFA9AF7C8F0950A0D68C /* Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8698A6BAB4C29CBF7EA63 /* Demo.swift */; };
 		EB1760A8AE04C95A3C59CE7F /* People.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73CB869F051C937CE459CC4 /* People.swift */; };
 		F00F3C9B9BEF8AA7B4C789FF /* EmptyDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A890D7D885B1DDDCF29ACD0C /* EmptyDemo.swift */; };
@@ -27,18 +31,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A829D8A9E5D94A57733890E /* PersonAvatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonAvatar.swift; sourceTree = "<group>"; };
+		29F78B6446CF10D90B952EEF /* BenHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenHeader.swift; sourceTree = "<group>"; };
 		47057ED3B8A6B47174132EC1 /* DemoList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoList.swift; sourceTree = "<group>"; };
 		55C46238396693047C044216 /* SwiftChatDemo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SwiftChatDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5717982BD8F75BB38A8E75D2 /* DemoDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDestination.swift; sourceTree = "<group>"; };
 		6310DCDF2AD4C2925E7C4403 /* DemoTranscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoTranscript.swift; sourceTree = "<group>"; };
 		65CEF02E0A409EBBE51F9589 /* HistoryDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDemo.swift; sourceTree = "<group>"; };
 		67334F85CBAA4B472C36F583 /* GroupDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDemo.swift; sourceTree = "<group>"; };
+		69800184601B1FB45A0FF04E /* MessageMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMenu.swift; sourceTree = "<group>"; };
 		713994DBB49E815139AD4415 /* TintedDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TintedDemo.swift; sourceTree = "<group>"; };
 		73FB359325879ACD6240A798 /* DemoMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoMessage.swift; sourceTree = "<group>"; };
 		9FC8698A6BAB4C29CBF7EA63 /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		A02364F6DEC4FADCDF1ACF1C /* AttachmentsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsDemo.swift; sourceTree = "<group>"; };
 		A890D7D885B1DDDCF29ACD0C /* EmptyDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDemo.swift; sourceTree = "<group>"; };
 		CB690B725BC736B04E3F57EA /* SwiftChatDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftChatDemoApp.swift; sourceTree = "<group>"; };
+		DA2FEA23702CA3F889A6912C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E3E0A003BFF8DC8F79355EE0 /* ConversationDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDemo.swift; sourceTree = "<group>"; };
 		E483CD7C2876148E192FAF06 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
 		E680EC0840211B423FBA925A /* SampleThreads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleThreads.swift; sourceTree = "<group>"; };
@@ -62,11 +70,14 @@
 			isa = PBXGroup;
 			children = (
 				A02364F6DEC4FADCDF1ACF1C /* AttachmentsDemo.swift */,
+				29F78B6446CF10D90B952EEF /* BenHeader.swift */,
 				E3E0A003BFF8DC8F79355EE0 /* ConversationDemo.swift */,
 				6310DCDF2AD4C2925E7C4403 /* DemoTranscript.swift */,
 				A890D7D885B1DDDCF29ACD0C /* EmptyDemo.swift */,
 				67334F85CBAA4B472C36F583 /* GroupDemo.swift */,
 				65CEF02E0A409EBBE51F9589 /* HistoryDemo.swift */,
+				69800184601B1FB45A0FF04E /* MessageMenu.swift */,
+				1A829D8A9E5D94A57733890E /* PersonAvatar.swift */,
 				713994DBB49E815139AD4415 /* TintedDemo.swift */,
 			);
 			path = Demos;
@@ -102,6 +113,7 @@
 		C64B8D9627093C67179C305B /* SwiftChatDemo */ = {
 			isa = PBXGroup;
 			children = (
+				DA2FEA23702CA3F889A6912C /* Assets.xcassets */,
 				9FC8698A6BAB4C29CBF7EA63 /* Demo.swift */,
 				5717982BD8F75BB38A8E75D2 /* DemoDestination.swift */,
 				47057ED3B8A6B47174132EC1 /* DemoList.swift */,
@@ -121,6 +133,7 @@
 			buildConfigurationList = D1013F74C7D5FDA10F5DDB80 /* Build configuration list for PBXNativeTarget "SwiftChatDemo" */;
 			buildPhases = (
 				0CBD47E165B524409287AE1E /* Sources */,
+				6E1C321333CA12C14477DD45 /* Resources */,
 				34375E0E54B74FFEC8ECFD78 /* Frameworks */,
 			);
 			buildRules = (
@@ -171,12 +184,24 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		6E1C321333CA12C14477DD45 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D47E01E10006AD033674E7D5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0CBD47E165B524409287AE1E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				181C56CAC2F2A7A67ABF2D08 /* AttachmentsDemo.swift in Sources */,
+				54729615BC515F740024C3FF /* BenHeader.swift in Sources */,
 				F47A7EC581B36CA984B31A54 /* Conversation.swift in Sources */,
 				74DA53A350A7DB2E9DCAF453 /* ConversationDemo.swift in Sources */,
 				E20EEFA9AF7C8F0950A0D68C /* Demo.swift in Sources */,
@@ -188,7 +213,9 @@
 				F00F3C9B9BEF8AA7B4C789FF /* EmptyDemo.swift in Sources */,
 				A522595215F7F1B96795A45C /* GroupDemo.swift in Sources */,
 				5EA50472BBF53217D45C16BC /* HistoryDemo.swift in Sources */,
+				99FBA294BBC482900260099A /* MessageMenu.swift in Sources */,
 				EB1760A8AE04C95A3C59CE7F /* People.swift in Sources */,
+				9D84E963A3B525FB0D95A638 /* PersonAvatar.swift in Sources */,
 				3F4388E82BDCDEA0D0E422BD /* SampleThreads.swift in Sources */,
 				2F02211906509A252CD36DF9 /* SwiftChatDemoApp.swift in Sources */,
 				CDB554CEF44F0F83280BDE95 /* TintedDemo.swift in Sources */,
@@ -396,7 +423,7 @@
 			repositoryURL = "https://github.com/unionst/swift-chat.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
+				minimumVersion = 1.0.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
