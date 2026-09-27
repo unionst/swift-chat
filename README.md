@@ -83,10 +83,10 @@ final class Conversation {
     var messages: [ChatMessage] = []
     var typing: [ChatRole] = []
 
-    func send(_ text: String?, _ media: MessageMedia?) async {
+    func send(_ text: String?, _ media: [MessageMedia]) async {
         let message = ChatMessage(text: text ?? "", role: .me, sentAt: .now, status: .sending)
         messages.append(message)
-        await api.deliver(message, attachment: media)
+        await api.deliver(message, attachments: media)
     }
 }
 
@@ -132,6 +132,10 @@ Every row is keyed by a `Message.id`. In the collection form above, and inside a
 | `.me` | Outgoing bubble on the right |
 | `.user(id:displayName:)` | Incoming bubble on the left, with avatar and name in group chats |
 | `.system` | Centered gray text with no bubble |
+
+## Example app
+
+[Examples/SwiftChatDemo](https://github.com/unionst/swift-chat/tree/main/Examples/SwiftChatDemo) is a runnable app with six screens: a conversation with delivery receipts and typing dots, a group chat, a long thread that loads older messages, attachments, custom colors, and an empty state. Clone this repository, open `Examples/SwiftChatDemo/SwiftChatDemo.xcodeproj`, and run.
 
 ## Messages
 
@@ -186,7 +190,7 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 |---|---|
 | `chatInputPlaceholder(_:)` | Placeholder text in the input field. Default is "Message". |
 | `chatInputCapabilities(_:)` | Which attachments the plus button offers: `.photoLibrary`, `.files`, or `[]` for text only |
-| `onChatSend { text, media in }` | Async handler called when the user sends. Either value may be nil. |
+| `onChatSend { text, media in }` | Async handler called when the user sends. `text` may be nil; `media` is an array and may be empty. |
 | `onChatTypingChanged { isTyping in }` | Fires as the user starts and stops typing, for sending typing events to your server |
 | `chatTypingIndicators(_:)` | Shows typing dots for the given `[ChatRole]` |
 | `chatHeader { }` | A SwiftUI view pinned above the transcript |
