@@ -251,6 +251,14 @@ Chat(conversation.messages) { message in
 }
 ```
 
+A `subtitle` puts a second line under the name inside the same glass: where someone is, when they were last active, what an assistant is working on. Pass `nil` to take it away. The glass grows and shrinks around it while the header keeps its height, so the transcript never moves.
+
+```swift
+.chatHeader {
+    ChatHeader(title: "Assistant", subtitle: assistant.currentThought, avatarURL: assistant.photoURL)
+}
+```
+
 A group wears `ChatGroupAvatar`, which clusters up to seven faces the way Messages does:
 
 ```swift
