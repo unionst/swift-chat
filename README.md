@@ -10,15 +10,16 @@ The Messages app, as a SwiftUI view.
 
 </div>
 
-Swift Chat is a drop-in chat transcript for iOS. Hand it your messages and it renders them the way Messages does: bubble tails that land on the last message in a run, typing dots, delivery and read receipts, photo and video and file attachments, a keyboard that follows your finger, and a scroll with real weight to it. A UIKit collection view does the work underneath. SwiftUI is the only API you touch.
+Swift Chat is a drop-in chat transcript for iOS. Hand it your messages and it renders them the way Messages does: bubble tails that land on the last message in a run, typing dots, delivery and read receipts, photo and file attachments, a keyboard that follows your finger, and a scroll with real weight to it. A UIKit collection view does the work underneath. SwiftUI is the only API you touch.
 
 ## What's built in
 
 - **Bubbles** with automatic tail placement, grouping by sender, and timestamp separators.
 - **Typing indicators** for one person or a crowd.
 - **Delivery states**: sending, sent, delivered, read, failed.
-- **Attachments**: images with BlurHash placeholders, video, audio with waveforms, files, locations, and polls.
-- **The input bar**: text, dictation, a plus button for photos and files, and an async send hook.
+- **Attachments**: photos with BlurHash placeholders, several photos as one collage, and files.
+- **Tapbacks**: reactions drawn on the bubble and picked from the long-press menu.
+- **The input bar**: text, dictation, a plus menu for photos and files that opens over the keyboard, and an async send hook.
 - **Keyboard handling**: interactive dismissal and safe-area management that matches Messages.
 - **Group chats**: avatars and sender names appear on their own once three people are in the thread.
 - **Pagination**: load older messages at the top with a built-in spinner.
@@ -157,7 +158,8 @@ Message(message.text, role: message.role, timestamp: message.sentAt)
 | Modifier | What it does |
 |---|---|
 | `messageStatus(_:)` | Shows sending, sent, delivered, read, or failed under the bubble |
-| `messageMedia(_:)` | Attaches an image, video, audio clip, file, location, or poll |
+| `messageMedia(_:)` | Attaches a photo, several photos as one collage, or a file |
+| `messageReactions(_:)` | Draws tapbacks on the bubble |
 | `messageAttachment { }` | Renders a custom SwiftUI view as the attachment |
 | `messageHeader { }` | A view above the bubble, such as a sender name |
 | `messageFooter { }` | A view below the bubble |
@@ -171,12 +173,10 @@ Message(message.text, role: message.role, timestamp: message.sentAt)
 
 ```swift
 MessageMedia.image(url: URL, width: Int? = nil, height: Int? = nil, blurhash: String? = nil)
-MessageMedia.video(url: URL, thumbnailURL: URL? = nil, duration: TimeInterval? = nil)
-MessageMedia.audio(url: URL, duration: TimeInterval? = nil, waveform: [Float]? = nil)
 MessageMedia.file(url: URL, name: String, size: Int64? = nil, mimeType: String? = nil)
-MessageMedia.location(latitude: Double, longitude: Double, name: String? = nil)
-MessageMedia.poll(question: String, options: [String], votes: [Int]? = nil)
 ```
+
+Hand `messageMedia(_:)` an array of images and they are drawn as one collage. `MessageMedia` also declares `video`, `audio`, `location`, and `poll`. Those cases are reserved: the transcript does not draw them yet.
 
 Pass width and height for images to get correctly sized placeholders with no layout shift. Pass a BlurHash to show a blurred preview while the image loads.
 
@@ -192,6 +192,7 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `chatInputCapabilities(_:)` | Which attachments the plus button offers: `.photoLibrary`, `.files`, or `[]` for text only |
 | `onChatSend { text, media in }` | Async handler called when the user sends. `text` may be nil; `media` is an array and may be empty. |
 | `onChatTypingChanged { isTyping in }` | Fires as the user starts and stops typing, for sending typing events to your server |
+| `onChatInputTextChanged { text in }` | Fires with the input field’s text on every change, for keeping a draft per thread to seed back with `chatInitialInputText` |
 | `chatTypingIndicators(_:)` | Shows typing dots for the given `[ChatRole]` |
 | `chatHeader { }` | A SwiftUI view pinned above the transcript |
 | `chatEmptyView { }` | What to show when there are no messages. Laid out at the transcript's width, so text wraps. |
@@ -238,9 +239,53 @@ Chat(conversation.messages) { message in
 }
 ```
 
+### The built-in header
+
+`ChatHeader` is the header Messages draws: a photo over a name. With a visible navigation bar it sits level with the back button.
+
+```swift
+.chatHeader {
+    ChatHeader(title: "Alex", avatarURL: alex.photoURL) {
+        showProfile = true
+    }
+}
+```
+
+A group wears `ChatGroupAvatar`, which clusters up to seven faces the way Messages does:
+
+```swift
+.chatHeader {
+    ChatHeader(title: "Team Chat") {
+        ChatGroupAvatar(roles: members, size: 60) { role in
+            ProfilePhoto(for: role)
+        }
+    }
+}
+```
+
+### Tapbacks and the long-press menu
+
+```swift
+Chat(conversation.messages) { message in
+    Message(message.text, role: message.role, timestamp: message.sentAt)
+        .messageReactions(message.reactions)
+}
+.chatMessageContextMenu { (id: ChatMessage.ID) in
+    [
+        .tapbacks(conversation.reactions(on: id)) { emoji in
+            conversation.toggleReaction(emoji, on: id)
+        },
+        .separator,
+        ChatContextMenuItem("Copy", systemImage: "doc.on.doc") {
+            UIPasteboard.general.string = conversation.text(of: id)
+        },
+    ]
+}
+```
+
 ## UI testing
 
-The input bar's trailing button carries a stable accessibility identifier: `chat.send` while it sends, `chat.dictate` while the field is empty and it starts dictation. Its accessibility label is "Send" or "Dictate" to match.
+The input bar's trailing button carries a stable accessibility identifier: `chat.send` while it sends, `chat.dictate` while the field is empty and it starts dictation. Its accessibility label is "Send" or "Dictate" to match. The plus that opens the attachment menu is `chat.attach`, and its rows are `chat.attach.photos` and `chat.attach.files`.
 
 ## For AI coding agents
 
