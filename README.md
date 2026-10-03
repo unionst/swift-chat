@@ -25,7 +25,7 @@ Swift Chat is a drop-in chat transcript for iOS. Hand it your messages and it re
 - **Pagination**: load older messages at the top with a built-in spinner.
 - **Context menus and taps** delivered through UIKit's own event path, so they always fire.
 - **Haptics** on incoming messages, a scroll-to-bottom button, an empty state, and custom headers.
-- **Agent mode** for assistant threads: your question rises to the top and the answer streams in beneath it as bare text.
+- **An assistant style** for AI threads: your question rises to the top and the answer streams in beneath it as bare text.
 - **Dark mode, Dynamic Type, and the iOS 26 glass look**, because it is built from the system's own materials.
 
 ## Requirements
@@ -137,7 +137,7 @@ Every row is keyed by a `Message.id`. In the collection form above, and inside a
 
 ## Example app
 
-[Examples/SwiftChatDemo](https://github.com/unionst/swift-chat/tree/main/Examples/SwiftChatDemo) is a runnable app with seven screens: a conversation with delivery receipts and typing dots, a group chat, a long thread that loads older messages, attachments, custom colors, an empty state, and an assistant thread in agent mode. Clone this repository, open `Examples/SwiftChatDemo/SwiftChatDemo.xcodeproj`, and run.
+[Examples/SwiftChatDemo](https://github.com/unionst/swift-chat/tree/main/Examples/SwiftChatDemo) is a runnable app with seven screens: a conversation with delivery receipts and typing dots, a group chat, a long thread that loads older messages, attachments, custom colors, an empty state, and an assistant thread in the assistant style. Clone this repository, open `Examples/SwiftChatDemo/SwiftChatDemo.xcodeproj`, and run.
 
 ## Messages
 
@@ -204,11 +204,10 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `chatMessageContextMenu { id in [ChatContextMenuItem] }` | Long-press menu items per message, as data |
 | `onChatMessageTap { id in }` | Tap handler per message |
 | `chatSenderInfo(_:)` | `.automatic` shows avatars and names in group chats only; `.always` shows them everywhere |
-| `chatAgentMode(_:)` | Lays the thread out like an assistant's: a sent message rises to the top, the reply streams in beneath it as bare text. See [Agent mode](#agent-mode). |
-| `chatAgentStatus(_:)` | A line beside the agent-mode spinner saying what the assistant is doing. A new status rolls the old one up and out. |
-| `chatAgentReplyFont(_:)` | The font of an assistant's replies in agent mode. 19 points scaled with Dynamic Type by default. |
-| `chatInputBarHeight(_:)` | The message field's resting height. 40 by default, 46 in agent mode. |
-| `chatInputControlTint(_:)` | The send button's fill. The accent color by default, `.primary` in agent mode. |
+| `chatStyle(_:)` | `.messages` (default) or `.assistant`: a sent message rises to the top and the reply streams in beneath it as bare text. See [Assistant style](#assistant-style). |
+| `chatTypingStatus(_:)` | A line beside the typing indicator in the assistant style saying what is happening. A new status rolls the old one up and out. |
+| `chatInputBarHeight(_:)` | The message field's resting height. 40 by default, 46 in the assistant style. |
+| `chatInputControlTint(_:)` | The send button's fill. The accent color by default, the label color in the assistant style. |
 | `chatBubbleStyle(_:)` | Any `ShapeStyle` for outgoing bubbles. `.tint(_:)` also works. |
 | `chatBubbleTailsHidden(_:)` | Hides bubble tails |
 | `chatInputBarTint(_:)` | A translucent tint over the input bar's glass |
@@ -228,14 +227,14 @@ Chat(conversation.messages) { message in
 
 The transcript shows its own spinner above the oldest message while the closure runs and keeps the reader's position when the new page lands.
 
-### Agent mode
+### Assistant style
 
 ```swift
 Chat(thread.messages, typingUsers: thread.thinking ? [assistant] : []) { message in
     Message(message.text, role: message.role, timestamp: message.sentAt)
 }
-.chatAgentMode()
-.chatAgentStatus(thread.status)
+.chatStyle(.assistant)
+.chatTypingStatus(thread.status)
 .chatInputPlaceholder("Ask anything")
 .onChatSend { text, _ in
     await thread.send(text)
@@ -244,13 +243,13 @@ Chat(thread.messages, typingUsers: thread.thinking ? [assistant] : []) { message
 
 For a thread with an assistant rather than a person. A sent message rises to the top of the screen instead of settling at the bottom, and the room under it is held open, so the reply streams in beneath it while the question stays put, the way Siri and ChatGPT answer. The transcript does not chase a reply that runs past the bottom of the screen; the reader scrolls to it, and the scroll-to-bottom button appears when something lands below the fold.
 
-Replies are drawn as bare text across the full width, with no bubble, tail, or avatar column, and their words fade in one after another as they arrive, the way Siri's answers do. Reply text is Markdown: headings, bullet and numbered lists, bold and italic, links, block quotes, code blocks, and rules all render as blocks, at 19 points by default (`chatAgentReplyFont(_:)`). A photo in a reply runs the full width of the thread and opens full screen on a tap; a `messageAttachment { }` view is drawn bare at full width, so a card you design is the card the reader sees. Long-press on a reply opens the same menu bubbles get.
+Replies are drawn as bare text across the full width, with no bubble, tail, or avatar column, and their words fade in one after another as they arrive, the way Siri's answers do. Reply text is Markdown: headings, bullet and numbered lists, bold and italic, links, block quotes, code blocks, and rules all render as blocks, at 19 points by default; set `.font(_:)` on the `Message` to change it. A photo in a reply runs the full width of the thread and opens full screen on a tap; a `messageAttachment { }` view is drawn bare at full width, so a card you design is the card the reader sees. Long-press on a reply opens the same menu bubbles get.
 
 Your own messages keep their bubbles, in gray with dark text rather than the accent color; `chatBubbleStyle(_:)` still recolors them. The message field is taller (`chatInputBarHeight(_:)`) and its send button is `.primary` (`chatInputControlTint(_:)`). A message that sets its own `messageStyle(_:)` keeps that style.
 
-While the assistant works, show its typing indicator: in agent mode it is a small ring spinner. `chatAgentStatus(_:)` puts a line beside it saying what is happening, such as "Searching", and a new status rolls the old line up and out. Pass `nil` for the spinner alone.
+While the assistant works, show its typing indicator: in the assistant style it is a small ring spinner. `chatTypingStatus(_:)` puts a line beside it saying what is happening, such as "Searching", and a new status rolls the old line up and out. Pass `nil` for the spinner alone.
 
-Stream a reply by appending one message for it and rewriting that message's text as tokens arrive. The row grows in place, each new word fades in, and nothing above moves. There is no timestamp separator in agent mode.
+Stream a reply by appending one message for it and rewriting that message's text as tokens arrive. The row grows in place, each new word fades in, and nothing above moves. There is no timestamp separator in the assistant style.
 
 ### Custom header
 
