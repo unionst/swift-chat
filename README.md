@@ -6,7 +6,7 @@ The Messages app, as a SwiftUI view.
 
 [unionst.com/swiftchat](https://unionst.com/swiftchat) · [Documentation](https://www.swiftipedia.org/documentation/unionchat) · [llms.txt](https://unionst.com/swiftchat/llms.txt) · by [Union St](https://unionst.com)
 
-<img src="assets/swift-chat.png" width="320" alt="A Swift Chat conversation on iPhone">
+<img src="assets/swift-chat.gif" width="320" alt="A Swift Chat conversation on iPhone: typing dots, three messages sent in a row, Delivered turning into Read">
 
 </div>
 
@@ -326,7 +326,13 @@ The input bar's trailing button carries a stable accessibility identifier: `chat
 
 ## For AI coding agents
 
-Swift Chat publishes an [llms.txt](https://unionst.com/swiftchat/llms.txt) and a [full reference](https://unionst.com/swiftchat/llms-full.txt). If you are using Claude Code, Cursor, Codex, or another agent, paste this:
+Swift Chat ships an agent skill. Install it into Claude Code, Cursor, Codex, or any client that reads the open skills format:
+
+```
+npx skills add unionst/swift-chat
+```
+
+That gives your agent the full API, the assistant-style pattern, and the mistakes to avoid, so "add a chat screen with Swift Chat" works in one prompt. There is also an [llms.txt](https://unionst.com/swiftchat/llms.txt) and a [full reference](https://unionst.com/swiftchat/llms-full.txt) if you'd rather paste a link:
 
 ```
 Add Swift Chat to this iOS app. Package URL https://github.com/unionst/swift-chat.git,

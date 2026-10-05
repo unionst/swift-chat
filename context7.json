@@ -3,14 +3,21 @@
   "projectTitle": "Swift Chat",
   "description": "An iMessage-faithful chat UI for SwiftUI on iOS 18+. One view renders bubbles with tails, typing indicators, delivery states, attachments, keyboard handling, and pagination.",
   "folders": [],
-  "excludeFolders": ["Sources", ".swiftpm"],
-  "excludeFiles": ["Package.resolved"],
+  "excludeFolders": [
+    "Sources",
+    ".swiftpm",
+    "Examples"
+  ],
+  "excludeFiles": [
+    "Package.resolved"
+  ],
   "rules": [
     "Import the SwiftChat product: `import SwiftChat`. The older `import UnionChat` still works but is deprecated.",
     "Build a transcript with `Chat(messages) { Message($0.text, role: $0.role, timestamp: $0.sentAt) }` where `messages` is any RandomAccessCollection of Identifiable values.",
     "Roles are `.me`, `.system`, and `.user(id:displayName:)`.",
-    "Handle sending with `.onChatSend { text, media in ... }`; both parameters are optional.",
     "Show typing dots with `.chatTypingIndicators([ChatRole])`, which must be applied directly to Chat before other modifiers.",
-    "Requires iOS 18, Xcode 16, Swift 6.1."
+    "Handle sending with `.onChatSend { text, media in ... }`; `text` is optional and `media` is an array of MessageMedia (may be empty).",
+    "For AI assistant threads use `.chatStyle(.assistant)`: the question rises to the top and the reply streams in as bare Markdown text.",
+    "Requires iOS 18 and Xcode 26.1 (the binary module interface is built with Swift 6.2)."
   ]
 }
