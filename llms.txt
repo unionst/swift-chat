@@ -28,3 +28,15 @@ Chat(messages) { message in
     await conversation.send(text, media)
 }
 ```
+
+## Assistant style
+
+For an assistant thread: the sent message rises to the top of the screen and the reply streams in beneath it as bare, full-width Markdown whose words fade in one after another. Append one message for the reply and rewrite its text as tokens arrive. The typing indicator is a ring spinner; `chatTypingStatus(_:)` adds a status line beside it. Photos in replies run full width; `messageAttachment { }` views draw bare. Own bubbles are gray, the field is taller, the send button is `.primary`; override with `chatBubbleStyle`, `chatInputBarHeight`, `chatInputControlTint`; set `.font` on the `Message` for reply text. `chatInputCapabilities([.camera, .photoLibrary, .files])` for the plus menu.
+
+```swift
+Chat(thread.messages, typingUsers: thread.thinking ? [assistant] : []) { message in
+    Message(message.text, role: message.role, timestamp: message.sentAt)
+}
+.chatStyle(.assistant)
+.chatTypingStatus(thread.status)
+```

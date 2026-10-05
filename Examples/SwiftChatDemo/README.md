@@ -1,6 +1,6 @@
 # Swift Chat Demo
 
-A small iOS app that shows [Swift Chat](https://github.com/unionst/swift-chat) in six situations. Open `SwiftChatDemo.xcodeproj`, pick a simulator or your phone, and run. Xcode fetches the package on first open.
+A small iOS app that shows [Swift Chat](https://github.com/unionst/swift-chat) in seven situations. Open `SwiftChatDemo.xcodeproj`, pick a simulator or your phone, and run. Xcode fetches the package on first open.
 
 | Screen | What it shows | Where to look |
 |---|---|---|
@@ -10,6 +10,7 @@ A small iOS app that shows [Swift Chat](https://github.com/unionst/swift-chat) i
 | Attachments | Photos, a collage, and the plus menu for photos and files | `Demos/AttachmentsDemo.swift` |
 | Your colors | Outgoing bubbles, the send button, and the cursor in a brand color | `Demos/TintedDemo.swift` |
 | Empty state | A conversation before its first message | `Demos/EmptyDemo.swift` |
+| Assistant | An assistant thread: the question rises to the top and a Markdown answer streams in beneath it, with a photo, a custom card, a status spinner, a toolbar, and a plus menu with camera, photos, and files | `Demos/AgentDemo.swift`, `Model/Assistant.swift` |
 
 Every screen is the same transcript, `Demos/DemoTranscript.swift`, with a few modifiers on top. That file is the whole integration: one `Chat`, one `Message` per row, `onChatSend`, and the long-press menu from `Demos/MessageMenu.swift`.
 

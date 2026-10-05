@@ -7,7 +7,7 @@ options:
 packages:
   swift-chat:
     url: https://github.com/unionst/swift-chat.git
-    from: 1.0.4
+    from: 1.0.6
 targets:
   SwiftChatDemo:
     type: application
@@ -27,6 +27,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_NSCameraUsageDescription: To attach a photo you take.
         CODE_SIGN_STYLE: Automatic
     dependencies:
       - package: swift-chat

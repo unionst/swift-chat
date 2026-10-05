@@ -7,6 +7,7 @@ enum Demo: String, CaseIterable, Identifiable {
     case attachments
     case tinted
     case empty
+    case agent
 
     var id: String { rawValue }
 
@@ -18,6 +19,7 @@ enum Demo: String, CaseIterable, Identifiable {
         case .attachments: "Attachments"
         case .tinted: "Your colors"
         case .empty: "Empty state"
+        case .agent: "Assistant"
         }
     }
 
@@ -29,6 +31,7 @@ enum Demo: String, CaseIterable, Identifiable {
         case .attachments: "Photos, a collage, and a plus button for photos and files"
         case .tinted: "Outgoing bubbles in a brand color"
         case .empty: "What a new conversation shows before the first message"
+        case .agent: "Your question rises to the top and the answer streams in beneath it"
         }
     }
 
@@ -40,6 +43,7 @@ enum Demo: String, CaseIterable, Identifiable {
         case .attachments: "photo.on.rectangle"
         case .tinted: "paintpalette"
         case .empty: "bubble"
+        case .agent: "sparkles"
         }
     }
 }

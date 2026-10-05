@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/unionst/swift-chat.git",
       "state" : {
-        "revision" : "46af244ec5437dc1252ca4e0314dd16a1174267b",
-        "version" : "1.0.4"
+        "revision" : "8a8f0ef5b9f49f3b685dc8f4b864dbc4d2e8b892",
+        "version" : "1.0.6"
       }
     }
   ],
