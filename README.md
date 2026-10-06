@@ -4,9 +4,9 @@
 
 The Messages app, as a SwiftUI view.
 
-[Try it on your phone](https://testflight.apple.com/join/57bKq9jd) · [unionst.com/swiftchat](https://unionst.com/swiftchat) · [Documentation](https://www.swiftipedia.org/documentation/unionchat) · [llms.txt](https://unionst.com/swiftchat/llms.txt) · by [Union St](https://unionst.com)
+[unionst.com/swiftchat](https://unionst.com/swiftchat) · [Documentation](https://www.swiftipedia.org/documentation/unionchat) · [llms.txt](https://unionst.com/swiftchat/llms.txt) · by [Union St](https://unionst.com)
 
-<img src="assets/swift-chat.gif" width="320" alt="A Swift Chat conversation on iPhone: typing dots, three messages sent in a row, Delivered turning into Read">
+<img src="assets/swift-chat.png" width="320" alt="A Swift Chat conversation on iPhone">
 
 </div>
 
@@ -137,7 +137,7 @@ Every row is keyed by a `Message.id`. In the collection form above, and inside a
 
 ## Example app
 
-[Try it on your phone](https://testflight.apple.com/join/57bKq9jd) through TestFlight, no Xcode needed. It is [Examples/SwiftChatDemo](https://github.com/unionst/swift-chat/tree/main/Examples/SwiftChatDemo), a runnable app with seven screens: a conversation with delivery receipts and typing dots, a group chat, a long thread that loads older messages, attachments, custom colors, an empty state, and an assistant thread in the assistant style. To run it yourself, clone this repository, open `Examples/SwiftChatDemo/SwiftChatDemo.xcodeproj`, and run.
+[Examples/SwiftChatDemo](https://github.com/unionst/swift-chat/tree/main/Examples/SwiftChatDemo) is a runnable app with seven screens: a conversation with delivery receipts and typing dots, a group chat, a long thread that loads older messages, attachments, custom colors, an empty state, and an assistant thread in the assistant style. Clone this repository, open `Examples/SwiftChatDemo/SwiftChatDemo.xcodeproj`, and run.
 
 ## Messages
 
@@ -201,7 +201,7 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `chatLoadsOlderMessages { }` | Async loader called at the top of the transcript. Return `false` when nothing older remains. |
 | `onChatScrollEdge(_:perform:)` | Callback when the reader reaches the top or bottom edge |
 | `onMessagesEvictable { ids in }` | Tells you which off-screen message ids can be dropped in very long threads |
-| `chatMessageContextMenu { id in [ChatContextMenuItem] }` | Long-press menu items per message, as data |
+| `chatMessageContextMenu { id in … }` | The long-press menu per message, written as a result builder of `ChatContextMenuItem`s with `Divider()` between groups |
 | `onChatMessageTap { id in }` | Tap handler per message |
 | `chatSenderInfo(_:)` | `.automatic` shows avatars and names in group chats only; `.always` shows them everywhere |
 | `chatStyle(_:)` | `.messages` (default) or `.assistant`: a sent message rises to the top and the reply streams in beneath it as bare text. See [Assistant style](#assistant-style). |
@@ -308,31 +308,30 @@ Chat(conversation.messages) { message in
         .messageReactions(message.reactions)
 }
 .chatMessageContextMenu { (id: ChatMessage.ID) in
-    [
-        .tapbacks(conversation.reactions(on: id)) { emoji in
-            conversation.toggleReaction(emoji, on: id)
-        },
-        .separator,
-        ChatContextMenuItem("Copy", systemImage: "doc.on.doc") {
-            UIPasteboard.general.string = conversation.text(of: id)
-        },
-    ]
+    ChatContextMenuItem.tapbacks(conversation.reactions(on: id)) { emoji in
+        conversation.toggleReaction(emoji, on: id)
+    }
+    Divider()
+    ChatContextMenuItem("Copy", systemImage: "doc.on.doc") {
+        UIPasteboard.general.string = conversation.text(of: id)
+    }
+    if conversation.isMine(id) {
+        ChatContextMenuItem("Delete", systemImage: "trash", destructive: true) {
+            conversation.delete(id)
+        }
+    }
 }
 ```
 
+The menu is a result builder: write items one after another, put `Divider()` between groups, and use `if`, `else`, and `for` the way you would in a view. A closure that returns an array of items still works.
+
 ## UI testing
 
-The input bar's trailing button carries a stable accessibility identifier: `chat.send` while it sends, `chat.dictate` while the field is empty and it starts dictation. Its accessibility label is "Send" or "Dictate" to match. The plus that opens the attachment menu is `chat.attach`, and its rows are `chat.attach.photos` and `chat.attach.files`.
+The input bar's trailing button carries a stable accessibility identifier: `chat.send` while it sends, `chat.dictate` while the field is empty and it starts dictation. Its accessibility label is "Send" or "Dictate" to match. The plus that opens the attachment menu is `chat.attach`, and its rows are `chat.attach.camera`, `chat.attach.photos` and `chat.attach.files`.
 
 ## For AI coding agents
 
-Swift Chat ships an agent skill. Install it into Claude Code, Cursor, Codex, or any client that reads the open skills format:
-
-```
-npx skills add unionst/swift-chat
-```
-
-That gives your agent the full API, the assistant-style pattern, and the mistakes to avoid, so "add a chat screen with Swift Chat" works in one prompt. There is also an [llms.txt](https://unionst.com/swiftchat/llms.txt) and a [full reference](https://unionst.com/swiftchat/llms-full.txt) if you'd rather paste a link:
+Swift Chat publishes an [llms.txt](https://unionst.com/swiftchat/llms.txt) and a [full reference](https://unionst.com/swiftchat/llms-full.txt). If you are using Claude Code, Cursor, Codex, or another agent, paste this:
 
 ```
 Add Swift Chat to this iOS app. Package URL https://github.com/unionst/swift-chat.git,
