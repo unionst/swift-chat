@@ -7,7 +7,7 @@ options:
 packages:
   swift-chat:
     url: https://github.com/unionst/swift-chat.git
-    from: 1.0.6
+    from: 1.0.7
 targets:
   SwiftChatDemo:
     type: application

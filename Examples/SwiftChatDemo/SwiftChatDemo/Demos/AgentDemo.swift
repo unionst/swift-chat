@@ -22,14 +22,13 @@ struct AgentDemo: View {
         .chatInputPlaceholder("Ask anything")
         .chatInputCapabilities([.camera, .photoLibrary, .files])
         .chatMessageContextMenu { [assistant] (id: UUID) in
-            var items: [ChatContextMenuItem] = []
             if let text = assistant.text(of: id), !text.isEmpty {
-                items.append(ChatContextMenuItem("Copy", systemImage: "doc.on.doc") {
+                ChatContextMenuItem("Copy", systemImage: "doc.on.doc") {
                     UIPasteboard.general.string = text
-                })
-                items.append(ChatContextMenuItem("Regenerate", systemImage: "arrow.clockwise") { })
+                }
+                Divider()
+                ChatContextMenuItem("Regenerate", systemImage: "arrow.clockwise") { }
             }
-            return items
         }
         .chatEmptyView {
             ContentUnavailableView(
