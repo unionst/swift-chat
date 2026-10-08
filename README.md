@@ -177,7 +177,7 @@ MessageMedia.image(url: URL, width: Int? = nil, height: Int? = nil, blurhash: St
 MessageMedia.file(url: URL, name: String, size: Int64? = nil, mimeType: String? = nil)
 ```
 
-Hand `messageMedia(_:)` an array of images and they are drawn as one collage. `MessageMedia` also declares `video`, `audio`, `location`, and `poll`. Those cases are reserved: the transcript does not draw them yet.
+Hand `messageMedia(_:)` an array of images and they are drawn as one collage. `MessageMedia` also declares `video`, `audio`, `location`, and `poll`. The transcript does not draw those yet; a picked video shows in the input strip and reaches `onChatSend`, and the host draws it in the thread with `messageAttachment { }`.
 
 Pass width and height for images to get correctly sized placeholders with no layout shift. Pass a BlurHash to show a blurred preview while the image loads.
 
@@ -227,7 +227,16 @@ Chat(conversation.messages) { message in
 }
 ```
 
-The transcript shows its own spinner above the oldest message while the closure runs and keeps the reader's position when the new page lands.
+Once the thread is tall enough to scroll, the transcript keeps its own spinner above the oldest message; scrolling up finds it already there, reaching it asks for the next page, and the reader's position holds when the page lands. A thread that fits on screen shows no spinner and asks once on open, so a short cached window still fills and a short thread with nothing older never spins.
+
+The spinner stays until the loader returns `false`, so a thread whose first page already holds everything spins until the reader reaches the top and the loader answers. When your server says whether a page has anything behind it, pass that along and the spinner is drawn only when there is a page to fetch:
+
+```swift
+.chatLoadsOlderMessages { await conversation.loadOlderPage() }
+.chatHasOlderMessages(conversation.hasOlderMessages)
+```
+
+`false` draws nothing above the oldest row and asks the loader for nothing, `true` keeps the spinner there (and clears an earlier `false`, say after a gap in the cache), and `nil` means not known yet, which behaves exactly as it does without the modifier.
 
 ### Assistant style
 
