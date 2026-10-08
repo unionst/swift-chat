@@ -190,7 +190,8 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | Modifier | What it does |
 |---|---|
 | `chatInputPlaceholder(_:)` | Placeholder text in the input field. Default is "Message". |
-| `chatInputCapabilities(_:)` | Which attachments the plus button offers: `.camera`, `.photoLibrary`, `.files`, or `[]` for text only |
+| `chatInputCapabilities(_:)` | Which attachments the plus button offers: `.camera`, `.photoLibrary`, `.files`, or `[]` for text only. Add `.videoLibrary` beside `.photoLibrary` and videos join the Photos sheet, arriving in `onChatSend` as `.video(url:thumbnailURL:duration:)` with a local file URL |
+| `chatCameraPresented(_:)` | Opens the camera from the outside, the way the plus menu’s Camera row does: set the binding to `true` and the bar brings the camera up, then puts it back to `false` when the camera closes. Needs `.camera` in `chatInputCapabilities`. A host uses it to land in a thread with the camera already up, say from a lock screen Control |
 | `onChatSend { text, media in }` | Async handler called when the user sends. `text` may be nil; `media` is an array and may be empty. |
 | `onChatTypingChanged { isTyping in }` | Fires as the user starts and stops typing, for sending typing events to your server |
 | `onChatInputTextChanged { text in }` | Fires with the input field’s text on every change, for keeping a draft per thread to seed back with `chatInitialInputText` |
@@ -199,6 +200,7 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `chatEmptyView { }` | What to show when there are no messages. Laid out at the transcript's width, so text wraps. |
 | `chatAutoscrollBehavior(_:)` | `.whenAtBottom` (default), `.always`, or `.never`. A scroll-to-bottom button appears when needed. |
 | `chatLoadsOlderMessages { }` | Async loader called at the top of the transcript. Return `false` when nothing older remains. |
+| `chatHasOlderMessages(_:)` | Whether anything older exists, when you know. `false` draws no spinner, `true` keeps it waiting, `nil` leaves it to the loader's answer. |
 | `onChatScrollEdge(_:perform:)` | Callback when the reader reaches the top or bottom edge |
 | `onMessagesEvictable { ids in }` | Tells you which off-screen message ids can be dropped in very long threads |
 | `chatMessageContextMenu { id in … }` | The long-press menu per message, written as a result builder of `ChatContextMenuItem`s with `Divider()` between groups |
