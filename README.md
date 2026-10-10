@@ -193,8 +193,9 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `chatInputCapabilities(_:)` | Which attachments the plus button offers: `.camera`, `.photoLibrary`, `.files`, or `[]` for text only. Add `.videoLibrary` beside `.photoLibrary` and videos join the Photos sheet, arriving in `onChatSend` as `.video(url:thumbnailURL:duration:)` with a local file URL |
 | `chatCameraPresented(_:)` | Opens the camera from the outside, the way the plus menu’s Camera row does: set the binding to `true` and the bar brings the camera up, then puts it back to `false` when the camera closes. Needs `.camera` in `chatInputCapabilities`. A host uses it to land in a thread with the camera already up, say from a lock screen Control |
 | `onChatSend { text, media in }` | Async handler called when the user sends. `text` may be nil; `media` is an array and may be empty. |
-| `onChatTypingChanged { isTyping in }` | Fires as the user starts and stops typing, for sending typing events to your server |
+| `onChatTypingChanged { isTyping in }` | True while the field holds text, false once it is sent or cleared. A draft left sitting in the field is still typing, so an assistant can hold its reply until the field is clear. `onChatTypingChanged(idleAfter:)` is the keystroke form for the indicator another person sees: true on an edit, false after `idleAfter` without one |
 | `onChatInputTextChanged { text in }` | Fires with the input field’s text on every change, for keeping a draft per thread to seed back with `chatInitialInputText` |
+| `chatMainThreadWatchdog(_:)` | In debug builds, logs a main-thread stall longer than the threshold (100 ms by default) while the field has the keyboard, with the last thing the chat was doing. See [Keeping the main thread free](#keeping-the-main-thread-free) |
 | `chatTypingIndicators(_:)` | Shows typing dots for the given `[ChatRole]` |
 | `chatHeader { }` | A SwiftUI view pinned above the transcript |
 | `chatEmptyView { }` | What to show when there are no messages. Laid out at the transcript's width, so text wraps. |
@@ -335,6 +336,26 @@ Chat(conversation.messages) { message in
 ```
 
 The menu is a result builder: write items one after another, put `Divider()` between groups, and use `if`, `else`, and `for` the way you would in a view. A closure that returns an array of items still works.
+
+## Keeping the main thread free
+
+A keystroke the main thread is too busy to take is a dropped letter, and a sentence with dropped letters reads as typos. Swift Chat keeps its own work off the keystroke path: a keystroke re-evaluates the input bar alone, not the transcript or your header; the field's height is measured once per edit; photos and files are decoded, resized, and copied on a background task before they are staged; the transcript diffs its rows only when a message actually changed.
+
+Your side of the chat matters as much, because every callback and view body below runs on the main actor:
+
+- `onChatSend` is async so that you can `await` your network call, but the code before its first `await` runs on the main actor at the moment of the tap. Append the message and return; encode JSON, write files, resize images, and talk to the network on a background task or an actor.
+- `onChatInputTextChanged` fires on every keystroke. Store the string and return. Save drafts on a pause or on dismissal, not per keystroke.
+- `onChatTypingChanged` fires as the field fills and empties. Send the typing event; do not persist or lay out anything there.
+- Row views, the header, and the empty view are re-evaluated when a message changes. Keep their bodies to layout: no date parsing, no image decoding, no file reads, no `Calendar`, `DateFormatter`, or `JSONDecoder` created in a body. Compute once and store on the model.
+- Keep message models cheap to compare. The transcript fingerprints each row's id, role, time, delivery status, text, and reactions on every evaluation; a model whose properties are computed on access pays that cost per row.
+- Do not force layout from a callback (`layoutIfNeeded`, reading frames through `UIView` hierarchies) while the keyboard is up.
+
+To see when it slips, apply `.chatMainThreadWatchdog()` in debug builds. While the field is first responder a probe off the main thread asks it, every 50 ms, to run an empty block; an answer later than the threshold is logged to the unified log (subsystem `com.unionst.swift-chat`, category `MainThread`) with the stall's length and the last thing the chat was doing, a keystroke, a send, or one of your callbacks, with how long before the stall it began, and is emitted as an Instruments signpost. Off unless applied; it adds nothing to a release build that leaves it out.
+
+```swift
+Chat(messages)
+    .chatMainThreadWatchdog(.milliseconds(100))
+```
 
 ## UI testing
 
