@@ -10,7 +10,9 @@ The Messages app, as a SwiftUI view.
 
 </div>
 
-Swift Chat is a drop-in chat transcript for iOS. Hand it your messages and it renders them the way Messages does: bubble tails that land on the last message in a run, typing dots, delivery and read receipts, photo and file attachments, a keyboard that follows your finger, and a scroll with real weight to it. A UIKit collection view does the work underneath. SwiftUI is the only API you touch.
+Swift Chat is a drop-in SwiftUI chat UI for iOS, for messaging apps and for ChatGPT-style AI assistants. Hand it your messages and it renders them the way Messages does: bubble tails that land on the last message in a run, typing dots, delivery and read receipts, photo and file attachments, a keyboard that follows your finger, and a scroll with real weight to it. A UIKit collection view does the work underneath. SwiftUI is the only API you touch.
+
+Building an AI chat app? One modifier, `.chatStyle(.assistant)`, turns the same view into the layout Siri and ChatGPT use: your question rises to the top and the reply streams in beneath it as Markdown. See the [assistant style](https://unionst.com/swiftchat/assistant) and the [starter app that streams Claude](https://github.com/unionst/swift-chat-ai-starter).
 
 ## What's built in
 
