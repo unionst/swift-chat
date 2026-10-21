@@ -21,6 +21,7 @@ Building an AI chat app? One modifier, `.chatStyle(.assistant)`, turns the same 
 - **Delivery states**: sending, sent, delivered, read, failed.
 - **Attachments**: photos with BlurHash placeholders, several photos as one collage, and files.
 - **Tapbacks**: reactions drawn on the bubble and picked from the long-press menu.
+- **Replies**: swipe a message to reply, the original quoted above the answer, a “1 Reply” count under it, and the thread over the blurred conversation, the way Messages does it.
 - **The input bar**: text, dictation, a plus menu for photos and files that opens over the keyboard, and an async send hook.
 - **Keyboard handling**: interactive dismissal and safe-area management that matches Messages.
 - **Group chats**: avatars and sender names appear on their own once three people are in the thread.
@@ -338,6 +339,25 @@ Chat(conversation.messages) { message in
 ```
 
 The menu is a result builder: write items one after another, put `Divider()` between groups, and use `if`, `else`, and `for` the way you would in a view. A closure that returns an array of items still works.
+
+### Replies
+
+```swift
+Chat(conversation.messages) { message in
+    Message(message.text, role: message.role, timestamp: message.sentAt)
+        .messageReply(to: message.replyToID)
+}
+.onChatSend { text, media in
+    await conversation.send(text, media: media)
+}
+.onChatReply { parentID, text, media in
+    await conversation.send(text, media: media, replyTo: parentID as? String)
+}
+```
+
+`messageReply(to:)` draws a message as a reply: the message it answers sits above it as a small outlined quote, joined by a line, and the original shows “1 Reply” under its bubble. Pass `quote:` too for an original that is not loaded yet.
+
+`onChatReply` turns on the rest. Swipe a message to the right and its thread opens: the original and its replies over the blurred conversation, the field reading “Reply”, the keyboard up. Tapping “1 Reply” opens it without the keyboard, and the close button in the header or a tap on the blur goes back. A send while a thread is open goes to `onChatReply` with the id of the message that started the thread, so a reply to a reply stays in the same thread. Without the handler there is no swipe and no thread.
 
 ## Keeping the main thread free
 
