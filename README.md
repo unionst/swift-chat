@@ -184,6 +184,8 @@ Hand `messageMedia(_:)` an array of images and they are drawn as one collage. `M
 
 Pass width and height for images to get correctly sized placeholders with no layout shift. Pass a BlurHash to show a blurred preview while the image loads.
 
+A file is drawn as a bubble the way Messages draws one: its Quick Look thumbnail, its name, and its kind and size. Tapping it opens the file in Quick Look, downloaded first when the URL is remote; add `onChatFileTap { id, file in }` to handle the tap yourself, for example when the file needs your own authorization or download.
+
 `image(url:)` takes `https:`, `file:`, and `data:` URLs. A `data:` URL is decoded in place, so an inline base64 photo renders and opens full screen like any other; network images are cached on disk, local files are read directly.
 
 ## Chat modifiers
@@ -209,6 +211,7 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `onMessagesEvictable { ids in }` | Tells you which off-screen message ids can be dropped in very long threads |
 | `chatMessageContextMenu { id in … }` | The long-press menu per message, written as a result builder of `ChatContextMenuItem`s with `Divider()` between groups |
 | `onChatMessageTap { id in }` | Tap handler per message |
+| `onChatFileTap { id, file in }` | Tap handler for a file bubble, with the message id and the exact `.file` tapped. Without it a tap opens the file in Quick Look |
 | `chatSenderInfo(_:)` | `.automatic` shows avatars and names in group chats only; `.always` shows them everywhere |
 | `chatStyle(_:)` | `.messages` (default) or `.assistant`: a sent message rises to the top and the reply streams in beneath it as bare text. See [Assistant style](#assistant-style). |
 | `chatTypingStatus(_:)` | A line beside the typing indicator in the assistant style saying what is happening. A new status rolls the old one up and out. |

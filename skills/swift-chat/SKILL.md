@@ -115,6 +115,7 @@ Attachments: `MessageMedia.image(url:width:height:blurhash:)` and `MessageMedia.
 | `onMessagesEvictable { ids in }` | Off-screen ids safe to drop in huge threads |
 | `chatMessageContextMenu { id in [ChatContextMenuItem] }` | Long-press menu items as data, keyed by message id |
 | `onChatMessageTap { id in }` | Tap per message |
+| `onChatFileTap { id, file in }` | Tap on a file bubble; without it the file opens in Quick Look |
 | `chatSenderInfo(_:)` | `.automatic` (group chats only) or `.always` |
 | `chatStyle(_:)` | `.messages` (default) or `.assistant` |
 | `chatTypingStatus(_:)` | Status line beside the spinner in the assistant style |
