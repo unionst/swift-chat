@@ -112,6 +112,7 @@ Attachments: `MessageMedia.image(url:width:height:blurhash:)` and `MessageMedia.
 | `chatAutoscrollBehavior(_:)` | `.whenAtBottom` (default), `.always`, `.never` |
 | `chatLoadsOlderMessages { }` | Async loader at the top; return `false` when nothing older remains |
 | `chatInitialScrollTarget(id:anchor:onResult:)` | Open on a message (first or latest unread) instead of the last one; it holds its place until the reader scrolls, taps the field or sends. Read once, with the first messages |
+| `ChatHeaderPlacement.topMargin` (a static, not a modifier) | Room above the header on a folded phone (iPhone Duo), where the status bar is in a side column and nothing sits across the top. Set it to about 24 while `UITraitCollection.verticalBarEdge` is `.leading` or `.trailing`, zero otherwise. The side-column tab bar, a `NavigationSplitView` detail column and the plus menu need nothing from the host. |
 | `onChatScrollEdge(_:perform:)` | Top or bottom edge reached |
 | `onMessagesEvictable { ids in }` | Off-screen ids safe to drop in huge threads |
 | `chatMessageContextMenu { id in [ChatContextMenuItem] }` | Long-press menu items as data, keyed by message id |
