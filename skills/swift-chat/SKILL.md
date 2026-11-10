@@ -111,6 +111,7 @@ Attachments: `MessageMedia.image(url:width:height:blurhash:)` and `MessageMedia.
 | `chatEmptyView { }` | Shown when there are no messages |
 | `chatAutoscrollBehavior(_:)` | `.whenAtBottom` (default), `.always`, `.never` |
 | `chatLoadsOlderMessages { }` | Async loader at the top; return `false` when nothing older remains |
+| `chatInitialScrollTarget(id:anchor:onResult:)` | Open on a message (first or latest unread) instead of the last one; it holds its place until the reader scrolls, taps the field or sends. Read once, with the first messages |
 | `onChatScrollEdge(_:perform:)` | Top or bottom edge reached |
 | `onMessagesEvictable { ids in }` | Off-screen ids safe to drop in huge threads |
 | `chatMessageContextMenu { id in [ChatContextMenuItem] }` | Long-press menu items as data, keyed by message id |

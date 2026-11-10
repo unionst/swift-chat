@@ -207,6 +207,7 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `chatAutoscrollBehavior(_:)` | `.whenAtBottom` (default), `.always`, or `.never`. A scroll-to-bottom button appears when needed. |
 | `chatLoadsOlderMessages { }` | Async loader called at the top of the transcript. Return `false` when nothing older remains. |
 | `chatHasOlderMessages(_:)` | Whether anything older exists, when you know. `false` draws no spinner, `true` keeps it waiting, `nil` leaves it to the loader's answer. |
+| `chatInitialScrollTarget(id:anchor:onResult:)` | Opens the transcript on a message instead of on the latest one, and keeps it there while history fills in around it. See [Opening on a message](#opening-on-a-message). |
 | `onChatScrollEdge(_:perform:)` | Callback when the reader reaches the top or bottom edge |
 | `onMessagesEvictable { ids in }` | Tells you which off-screen message ids can be dropped in very long threads |
 | `chatMessageContextMenu { id in … }` | The long-press menu per message, written as a result builder of `ChatContextMenuItem`s with `Divider()` between groups |
@@ -244,6 +245,27 @@ The spinner stays until the loader returns `false`, so a thread whose first page
 ```
 
 `false` draws nothing above the oldest row and asks the loader for nothing, `true` keeps the spinner there (and clears an earlier `false`, say after a gap in the cache), and `nil` means not known yet, which behaves exactly as it does without the modifier.
+
+### Opening on a message
+
+```swift
+Chat(conversation.messages) { message in
+    Message(message.text, role: message.role, timestamp: message.sentAt)
+}
+.chatInitialScrollTarget(id: conversation.latestUnreadID, anchor: .top) { result in
+    conversation.finishOpening(result)
+}
+```
+
+A thread normally opens on its last message. Give `chatInitialScrollTarget` the id of a message, the first unread one or the latest unread reply, and it opens there instead: the transcript stays hidden until that row is laid out, then appears with the message at the anchor. `.top` puts its first line under the header, which is what a long reply wants; `.center` and `.bottom` behave as they do in `ScrollViewReader`. Any message can be the target, a `messageAttachment { }` card included. A message too close to the end of the thread to reach the anchor opens the thread on its last row, as usual.
+
+The id is read once, when the first messages are shown, so pass it together with them. After that the modifier leaves the thread alone: clearing your unread state (the id going to `nil`) or a new id from a later arrival does not scroll anything.
+
+The message does not have to be loaded yet. If it is missing from the first messages, the transcript opens on the latest one and moves to the target when an update brings it, unless the reader has scrolled, tapped the field or sent in the meantime; pass `nil` to stop waiting.
+
+Once positioned, the message keeps its place while a cached snapshot is reconciled with history, older pages land above it, cards change height, or new messages arrive below. The reader scrolling, tapping the field or sending ends that, and the transcript behaves as it always does from there. The `Chat`, its composer and any draft are untouched throughout.
+
+`onResult` is called once: `.positioned` when the transcript is showing the message, `.interrupted` when the reader took over before the message arrived, and `.unreachable` when the message is further back than the transcript keeps loaded (about the newest 350 of the messages you pass), in which case the thread opened on the latest message.
 
 ### Assistant style
 
