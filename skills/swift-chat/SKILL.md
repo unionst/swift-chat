@@ -7,7 +7,7 @@ description: Add an iMessage-faithful chat screen to an iOS app with Swift Chat,
 
 One SwiftUI view that renders a conversation the way the Messages app does: collated bubble tails, typing dots, delivery and read receipts, photos and files, tapbacks, group chats, pagination, and a keyboard that follows the finger. A UIKit collection view does the work underneath; SwiftUI is the only API you touch.
 
-Free to use in any app. Closed source, shipped as a binary Swift package. iOS 18 or later, Xcode 26.1 or later.
+Free to use in any app. Closed source, shipped as a binary Swift package. iOS 18 or later, Xcode 26.1 or later. On the Mac it runs as a Mac Catalyst app (macOS 26 or later): in a multiplatform target replace the Mac destination with Mac (Mac Catalyst); a native AppKit destination cannot link it.
 
 Full reference: https://unionst.com/swiftchat/llms-full.txt. Runnable examples: `Examples/SwiftChatDemo` in https://github.com/unionst/swift-chat.
 
@@ -113,6 +113,7 @@ Attachments: `MessageMedia.image(url:width:height:blurhash:)` and `MessageMedia.
 | `chatLoadsOlderMessages { }` | Async loader at the top; return `false` when nothing older remains |
 | `chatInitialScrollTarget(id:anchor:onResult:)` | Open on a message (first or latest unread) instead of the last one; it holds its place until the reader scrolls, taps the field or sends. Read once, with the first messages |
 | `ChatHeaderPlacement.topMargin` (a static, not a modifier) | Room above the header on a folded phone (iPhone Duo), where the status bar is in a side column and nothing sits across the top. Set it to about 24 while `UITraitCollection.verticalBarEdge` is `.leading` or `.trailing`, zero otherwise. The side-column tab bar, a `NavigationSplitView` detail column and the plus menu need nothing from the host. |
+| `ChatLayoutConstants.readableWidth` (a static, not a modifier) | The widest the conversation is drawn, for a Mac window, an iPad or a split view. Set it to about 720 and the rows and input bar stay centred at that width while the transcript scrolls across the whole pane. `nil` by default, which draws edge to edge. On a Mac, Return sends and Shift-Return makes a new line with nothing from the host. |
 | `onChatScrollEdge(_:perform:)` | Top or bottom edge reached |
 | `onMessagesEvictable { ids in }` | Off-screen ids safe to drop in huge threads |
 | `chatMessageContextMenu { id in [ChatContextMenuItem] }` | Long-press menu items as data, keyed by message id |
