@@ -14,4 +14,4 @@ Changing something else? Delete all of this and say what the change is.
 - [ ] The link goes to the App Store, a public TestFlight invitation, or the app’s site
 - [ ] I make this app, or its maker has agreed to the listing
 
-A screenshot of the chat screen is welcome, and makes this quicker to merge.
+A short screen recording of the chat screen is welcome: it makes this quicker to merge, and it can join the row of recordings above the list.

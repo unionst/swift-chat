@@ -149,8 +149,14 @@ Every row is keyed by a `Message.id`. In the collection form above, and inside a
 
 ## Apps using Swift Chat
 
-- [Tally](https://apps.apple.com/us/app/tally-calorie-lift-coach/id6808934757): a calorie and training journal you keep by texting a coach.
+| Rate.fm | Tally | Jester |
+|:-:|:-:|:-:|
+| <img src="assets/apps/rate-fm.gif" width="240" alt="Rate.fm: press and hold a message, a tapback bar unfurls on glass, a reaction is added and the bubbles make room"> | <img src="assets/apps/tally.gif" width="240" alt="Tally: typing a request to the coach, typing dots, and the reply arriving as a food card in a bubble"> | <img src="assets/apps/jester.gif" width="240" alt="Jester: a chat with Jesse, Delivered becoming Read, typing dots, and the reply arriving line by line"> |
+| Group chat with tapbacks on glass | The coach chat, with replies as custom attachment views | An AI conversation, streamed in line by line |
+
 - [Rate.fm](https://apps.apple.com/us/app/rate-fm-rate-your-music/id6756295934): a diary of every album you listen to, where friends send each other records in a message.
+- [Tally](https://apps.apple.com/us/app/tally-calorie-lift-coach/id6808934757): a calorie and training journal you keep by texting a coach.
+- [Jester](https://apps.apple.com/us/app/jester-ai-rizz-keyboard/id6759629485): an AI dating coach you text for what to say next.
 <!--
 Add your app on a new line directly above this comment, in the same form:
 - [Name](link): what it is, in a sentence.
@@ -161,7 +167,7 @@ Shipping Swift Chat in your app? Put it on this list with a pull request:
 
 1. [Edit this README](https://github.com/unionst/swift-chat/edit/main/README.md). GitHub makes the fork for you.
 2. Add one line at the end of the list: `- [Name](link): what it is, in a sentence.`
-3. Open the pull request and say which screen of the app is Swift Chat.
+3. Open the pull request and say which screen of the app is Swift Chat. Attach a short screen recording of it if you have one, and it can join the row above.
 
 Any app people can get today belongs here, whatever its size: on the App Store, behind a public TestFlight link, or on its own site.
 
