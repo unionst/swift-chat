@@ -23,3 +23,5 @@ For a thread with an assistant rather than a person. A sent message rises to the
 **While the assistant works**, show its typing indicator: in the assistant style it is a small ring spinner. `chatTypingStatus(_:)` puts a line beside it saying what is happening, such as “Searching”, and a new status rolls the old line up and out. Pass `nil` for the spinner alone.
 
 **Stream a reply** by appending one message for it and rewriting that message’s text as tokens arrive. The row grows in place, each new word fades in, and nothing above moves. There is no timestamp separator in the assistant style.
+
+The style is the layout. What an agent does inside it, the status line through its tool calls, results as cards, suggestions to tap, and turn-taking, is in [Agent chats](agents.md).

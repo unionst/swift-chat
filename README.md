@@ -2,19 +2,19 @@
 
 # Swift Chat
 
-The Messages app, as a SwiftUI view.
+The Messages app, as a SwiftUI view. For conversations with people, and with agents.
 
 [Try it on your phone](https://testflight.apple.com/join/57bKq9jd) · [unionst.com/swiftchat](https://unionst.com/swiftchat) · [Documentation](https://www.swiftipedia.org/documentation/unionchat) · [llms.txt](https://unionst.com/swiftchat/llms.txt) · by [Union St](https://unionst.com)
 
-<img src="assets/swift-chat.gif" width="320" alt="A Swift Chat conversation on iPhone: typing dots, three messages sent in a row, Delivered turning into Read">
+<img src="assets/swift-chat.gif" width="300" alt="A Swift Chat conversation on iPhone: typing dots, three messages sent in a row, Delivered turning into Read">&nbsp;&nbsp;&nbsp;<img src="assets/agent.gif" width="300" alt="An agent thread in Swift Chat: suggestion chips, a status line rolling through three tool steps, a Markdown reply streaming in, a reservation card, and a confirmation after a suggested follow-up is tapped">
 
 </div>
 
-Swift Chat is a drop-in SwiftUI chat UI for iOS, for messaging apps and for ChatGPT-style AI assistants. Hand it your messages and it renders them the way Messages does: bubble tails that land on the last message in a run, typing dots, delivery and read receipts, photo and file attachments, a keyboard that follows your finger, and a scroll with real weight to it. A UIKit collection view does the work underneath. SwiftUI is the only API you touch.
+Swift Chat is a drop-in SwiftUI chat UI for iOS, for messaging apps and for AI agents. Hand it your messages and it renders them the way Messages does: bubble tails that land on the last message in a run, typing dots, delivery and read receipts, photo and file attachments, a keyboard that follows your finger, and a scroll with real weight to it. A UIKit collection view does the work underneath. SwiftUI is the only API you touch.
 
-Building an AI chat app? One modifier, `.chatStyle(.assistant)`, turns the same view into the layout Siri and ChatGPT use: your question rises to the top and the reply streams in beneath it as Markdown. See the [assistant style](https://unionst.com/swiftchat/assistant) and the [starter app that streams Claude](https://github.com/unionst/swift-chat-ai-starter).
+It is also the chat an agent lives in. One modifier, `.chatStyle(.assistant)`, turns the same view into the layout Siri and ChatGPT use, and the rest of an agent thread is built in: replies that stream in as Markdown, a status line that follows the agent through its tool calls, results drawn as your own SwiftUI views, suggestions to tap instead of type, and turn-taking that waits for you to finish typing. See [Building an agent](#building-an-agent), the [assistant style](https://unionst.com/swiftchat/assistant), and the [starter app that streams Claude](https://github.com/unionst/swift-chat-ai-starter).
 
-[Installation](#installation) · [Quick start](#quick-start) · [Example app](#example-app) · [Apps using Swift Chat](#apps-using-swift-chat) · [Guides](#guides)
+[Installation](#installation) · [Quick start](#quick-start) · [Building an agent](#building-an-agent) · [Example app](#example-app) · [Apps using Swift Chat](#apps-using-swift-chat) · [Guides](#guides)
 
 ## What’s built in
 
@@ -30,8 +30,16 @@ Building an AI chat app? One modifier, `.chatStyle(.assistant)`, turns the same 
 - **Pagination**: load older messages at the top with a built-in spinner.
 - **Context menus and taps** delivered through UIKit’s own event path, so they always fire.
 - **Haptics** on incoming messages, a scroll-to-bottom button, an empty state, and custom headers.
-- **An assistant style** for AI threads: your question rises to the top and the answer streams in beneath it as bare text.
 - **Dark mode, Dynamic Type, and the iOS 26 glass look**, because it is built from the system’s own materials.
+
+And for an agent:
+
+- **An assistant style**: your question rises to the top and the answer streams in beneath it, the way Siri and ChatGPT answer.
+- **Streaming Markdown**: headings, lists, links, quotes, and code blocks, each word fading in as it arrives.
+- **A status line** beside the spinner that rolls from one tool call to the next: “Checking your calendar”, “Searching”.
+- **Results as views**: any SwiftUI view in the thread as a message, for a booking, a chart, or a form with live buttons.
+- **Suggestions**: chips above the input bar, and dashed bubbles in the thread that fly up and send on a tap.
+- **Turn-taking**: the dots wait a beat, the reply is held while you are still typing, and three messages in a row are answered once.
 
 ## Requirements
 
@@ -141,6 +149,38 @@ Every row is keyed by a `Message.id`. In the collection form above, and inside a
 | `.user(id:displayName:)` | Incoming bubble on the left, with avatar and name in group chats |
 | `.system` | Centered gray text with no bubble |
 
+## Building an agent
+
+```swift
+Chat(thread.messages, typingUsers: thread.working ? [agent] : []) { message in
+    if let result = message.result {
+        Message(message.text, role: message.role, timestamp: message.sentAt)
+            .messageAttachment { ResultCard(result) }
+    } else {
+        Message(message.text, role: message.role, timestamp: message.sentAt)
+    }
+}
+.chatStyle(.assistant)
+.chatTypingStatus(thread.status)
+.chatInputSuggestions(thread.messages.isEmpty ? thread.openers : [])
+.onChatInputSuggestionTap { suggestion in
+    thread.send(suggestion.text)
+}
+.onChatSend { text, media in
+    await thread.send(text, media)
+}
+```
+
+That is the screen in the second recording at the top. Swift Chat has no model or network inside it, so the agent is yours; these are the pieces that draw it:
+
+- **Stream the reply** by appending one message and rewriting its text as tokens arrive. It renders as Markdown and grows in place.
+- **Say which step it is on** with `chatTypingStatus(_:)`. Set it at each tool call and the old line rolls away.
+- **Show a result** with `messageAttachment { }`, which puts any SwiftUI view in the thread, buttons included.
+- **Offer the next message** with `chatInputSuggestions(_:)` above the bar, or a `Message` with `.messageStyle(.suggestion)` in the thread.
+- **Take turns** with `ChatAssistantTurns`, for an agent that texts like a person: it waits for you to stop typing, answers a burst of messages once, and never shows a reply to a message you have since followed up.
+
+[Agent chats](Documentation/agents.md) covers each of these, in the assistant style and in ordinary bubbles. To start from a working app, clone the [starter that streams Claude](https://github.com/unionst/swift-chat-ai-starter).
+
 ## Example app
 
 [Try it on your phone](https://testflight.apple.com/join/57bKq9jd) through TestFlight, no Xcode needed. It is [Examples/SwiftChatDemo](https://github.com/unionst/swift-chat/tree/main/Examples/SwiftChatDemo), a runnable app with seven screens: a conversation with delivery receipts and typing dots, a group chat, a long thread that loads older messages, attachments, custom colors, an empty state, and an assistant thread in the assistant style. To run it yourself, clone this repository, open `Examples/SwiftChatDemo/SwiftChatDemo.xcodeproj`, and run.
@@ -178,6 +218,7 @@ The quick start above is enough for a working conversation. Each of these covers
 - [Loading older messages](Documentation/loading-older-messages.md): pagination and its spinner.
 - [Opening on a message](Documentation/opening-on-a-message.md): start a thread on the first unread message instead of the last one.
 - [Headers](Documentation/headers.md): your own header, the built-in `ChatHeader`, and group avatars.
+- [Agent chats](Documentation/agents.md): streaming, the status line through tool calls, results as views, suggestions, and turn-taking.
 - [Assistant style](Documentation/assistant-style.md): the layout for AI threads, with Markdown replies, streaming, and a status line.
 - [Folded phones](Documentation/folded-phones.md): the side column and split view on iPhone Duo.
 - [On the Mac](Documentation/mac.md): Mac Catalyst, Return to send, and a readable width.

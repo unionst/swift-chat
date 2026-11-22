@@ -27,7 +27,7 @@ Message(message.text, role: message.role, timestamp: message.sentAt)
 | `messageHeader { }` | A view above the bubble, such as a sender name |
 | `messageFooter { }` | A view below the bubble |
 | `messageAvatar { }` | A custom avatar for incoming messages |
-| `messageStyle(_:)` | `.default` for bubbles, `.plain` for bare text |
+| `messageStyle(_:)` | `.default` for bubbles, `.plain` for bare text, `.suggestion` for a dashed outline that sends its text on a tap. See [Agent chats](agents.md#offer-the-next-message). |
 | `font(_:)` | Overrides the bubble text font |
 | `contextMenu { }` | A long-press menu for that message |
 | `contentVersion(_:)` | Forces a re-render when content changes but the id does not |

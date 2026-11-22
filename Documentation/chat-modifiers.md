@@ -14,6 +14,8 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `onChatSend { text, media in }` | Async handler called when the user sends. `text` may be nil; `media` is an array and may be empty. |
 | `onChatTypingChanged { isTyping in }` | True while the field holds text, false once it is sent or cleared |
 | `onChatInputTextChanged { text in }` | Fires with the input field’s text on every change |
+| `chatInputSuggestions(_:)` | Chips stacked above the field while nothing is typed, each a whole message the person might send. See [Agent chats](agents.md#offer-the-next-message). |
+| `onChatInputSuggestionTap { suggestion in }` | Called with the chip that was tapped; send it |
 
 - **Videos.** Add `.videoLibrary` beside `.photoLibrary` and videos join the Photos sheet, arriving in `onChatSend` as `.video(url:thumbnailURL:duration:)` with a local file URL.
 - **Opening the camera yourself.** Set the `chatCameraPresented` binding to `true` and the bar brings the camera up, then puts it back to `false` when the camera closes. It needs `.camera` in `chatInputCapabilities`. A host uses it to land in a thread with the camera already up, say from a lock screen Control.
@@ -57,6 +59,16 @@ All of these are ordinary SwiftUI view modifiers applied to `Chat`.
 | `chatInputBarTint(_:)` | A translucent tint over the input bar’s glass |
 | `chatHapticsDisabled(_:)` | Turns off the tap on incoming messages |
 | `chatPaginationAnimated(_:)` | Whether bubbles animate during rapid bursts of messages |
+
+## Agents
+
+| Modifier | What it does |
+|---|---|
+| `chatAssistantTurns(_:)` | Hands the field’s typing to a `ChatAssistantTurns`, which runs an agent’s side of the thread: the dots wait a beat, the reply is held while the person is typing, and a burst of messages is answered once. See [Agent chats](agents.md#take-turns-the-way-a-person-does). |
+| `chatAssistantTyping(_:perform:)` | The typing gate alone, a `ChatAssistantTyping`, for a host that runs its own exchange |
+| `chatSuggestionFill(_:)` | A fill behind every `.suggestion` bubble, under its dashed outline, for a thread drawn over a photo or a blur. `nil` (default) draws the outline alone. |
+
+`chatStyle(.assistant)` and `chatTypingStatus(_:)` are under [Appearance](#appearance), and `chatInputSuggestions(_:)` is under [The input bar](#the-input-bar).
 
 ## Debugging
 

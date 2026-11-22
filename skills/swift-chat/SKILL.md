@@ -1,6 +1,6 @@
 ---
 name: swift-chat
-description: Add an iMessage-faithful chat screen to an iOS app with Swift Chat, the free SwiftUI package from Union St. Use when the user asks for a chat UI, a messages screen, a conversation view, an AI assistant thread, iMessage-style bubbles, typing indicators, read receipts, or a chat input bar in SwiftUI. Covers installation, the Chat and Message API, every modifier, attachments, the assistant style for AI threads, and the mistakes agents make most.
+description: Add an iMessage-faithful chat screen or an AI agent chat to an iOS app with Swift Chat, the free SwiftUI package from Union St. Use when the user asks for a chat UI, a messages screen, a conversation view, an AI assistant or agent thread, a ChatGPT-style streaming chat, iMessage-style bubbles, typing indicators, read receipts, or a chat input bar in SwiftUI. Covers installation, the Chat and Message API, every modifier, attachments, the assistant style, agent threads (streaming, tool-call status, result cards, suggestions, turn-taking), and the mistakes agents make most.
 ---
 
 # Swift Chat
@@ -146,6 +146,68 @@ Chat(thread.messages, typingUsers: thread.thinking ? [assistant] : []) { message
 
 The user's question rises to the top and the reply streams in beneath it as bare Markdown text (headings, lists, bold, links, code blocks render). Stream a reply by appending one message and rewriting its text as tokens arrive; the row grows in place. Show the spinner by passing the assistant's role in `typingUsers` while it works, and a status like "Searching" with `chatTypingStatus(_:)`.
 
+## Agent threads
+
+Swift Chat has no model or networking inside it. The host runs the agent; these pieces draw it. They work in the assistant style and in ordinary bubbles. Full guide: `Documentation/agents.md`.
+
+```swift
+Chat(thread.messages, typingUsers: thread.working ? [agent] : []) { message in
+    if let result = message.result {
+        Message(message.text, role: message.role, timestamp: message.sentAt)
+            .messageAttachment { ResultCard(result) }
+    } else if message.isSuggestion {
+        Message(message.text, role: .me, timestamp: message.sentAt)
+            .messageStyle(.suggestion)
+    } else {
+        Message(message.text, role: message.role, timestamp: message.sentAt)
+    }
+}
+.chatStyle(.assistant)
+.chatTypingStatus(thread.status)
+.chatInputSuggestions(thread.messages.isEmpty ? thread.openers : [])
+.onChatInputSuggestionTap { suggestion in
+    thread.send(suggestion.text)
+}
+.onChatSend { text, media in
+    await thread.send(text, media)
+}
+```
+
+- **Tool-call status.** Set the string behind `chatTypingStatus(_:)` at each tool call ("Checking your calendar", "Searching"); the old line rolls away. `nil` shows the spinner alone. It only shows while the agent's role is in `typingUsers`. In the messages style put it in `ChatHeader(title:subtitle:)`.
+- **Results as views.** `messageAttachment { }` puts any SwiftUI view in the thread as a message, with live controls: a booking, a chart, a form. Use a message with empty text for a card on its own.
+- **Suggestion chips.** `chatInputSuggestions([ChatInputSuggestion(text:systemImage:)])` stacks chips above the field while nothing is typed. The tap comes to `onChatInputSuggestionTap`; send it yourself.
+- **Suggestion bubbles.** A `Message` with `.messageStyle(.suggestion)` is a dashed outline on the person's side. A tap sends its text through the input bar and it arrives in `onChatSend`; remove the suggestion rows there.
+- **Turn-taking**, for an agent that texts in bubbles like a person:
+
+```swift
+@MainActor @Observable
+final class CoachThread {
+    var messages: [ThreadMessage] = []
+
+    @ObservationIgnored lazy var turns = ChatAssistantTurns(
+        exchange: { [unowned self] in try await model.reply(to: messages) },
+        deliver: { [unowned self] line in messages.append(ThreadMessage(text: line, role: coach)) },
+        fail: { error in print(error) }
+    )
+
+    func send(_ text: String) {
+        messages.append(ThreadMessage(text: text, role: .me))
+        turns.noteSent()
+    }
+}
+
+Chat(thread.messages, typingUsers: thread.turns.typingUsers(coach)) { message in
+    Message(message.text, role: message.role, timestamp: message.sentAt)
+}
+.chatAssistantTurns(thread.turns)
+.onChatSend { text, _ in
+    guard let text else { return }
+    await thread.send(text)
+}
+```
+
+`exchange` returns the reply as an array of lines. The controller raises the dots 1.6 s after a send, holds the reply while the person is typing, gathers a burst of messages into one `exchange`, passes a reply made stale by a follow-up to `shelve`, and delivers lines one at a time. Tune it with `ChatAssistantTurns(pacing: ChatAssistantPacing(...))`.
+
 ## Mistakes to avoid
 
 - `chatTypingIndicators(_:)` is a method on `Chat` itself. Apply it directly to `Chat(...)` before other modifiers, or pass `typingUsers:` in the initializer.
@@ -154,4 +216,5 @@ The user's question rises to the top and the reply streams in beneath it as bare
 - `onChatSend` gives `media` as an array. Older docs showed a single optional; that is gone.
 - Use `chatMessageContextMenu` (data) for per-row menus; a SwiftUI `contextMenu` inside a hosted cell can swallow taps.
 - Keep message ids stable across renders, or rows lose their height and delivery label.
+- A chip from `chatInputSuggestions` is not sent for you: send it in `onChatInputSuggestionTap`. A tapped `.suggestion` row is sent for you and arrives in `onChatSend`: do not send it again from `onChatMessageTap`.
 - `import SwiftChat`. The older `import UnionChat` still compiles but is deprecated.

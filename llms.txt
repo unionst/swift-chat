@@ -1,6 +1,6 @@
 # Swift Chat
 
-> The Messages app, as a SwiftUI view. Swift Chat is an iOS 18+ Swift package by Union St that renders an iMessage-faithful chat transcript from your own message models: bubble tails, typing indicators, delivery and read receipts, attachments, keyboard handling, pagination, group chats, dark mode.
+> The Messages app, as a SwiftUI view, for conversations with people and with AI agents. Swift Chat is an iOS 18+ Swift package by Union St that renders an iMessage-faithful chat transcript from your own message models: bubble tails, typing indicators, delivery and read receipts, attachments, keyboard handling, pagination, group chats, dark mode. For an agent it adds streaming Markdown replies, a status line through tool calls, results as SwiftUI views, suggestions, and turn-taking.
 
 Install: https://github.com/unionst/swift-chat.git (product "SwiftChat"). `import SwiftChat`. Formerly UnionChat; `import UnionChat` still works.
 
@@ -39,4 +39,34 @@ Chat(thread.messages, typingUsers: thread.thinking ? [assistant] : []) { message
 }
 .chatStyle(.assistant)
 .chatTypingStatus(thread.status)
+```
+
+## Agent chats
+
+Swift Chat draws an AI agent's thread as well as a conversation between people. It has no model or networking inside it; these pieces draw the agent you run. Full guide: https://github.com/unionst/swift-chat/blob/main/Documentation/agents.md
+
+- Stream a reply: append one message and rewrite its text as tokens arrive, keeping its id. Markdown in the assistant style.
+- Status through tool calls: `.chatTypingStatus("Searching")` beside the spinner while the agent is in `typingUsers`; a new line rolls the old one away; `nil` for the spinner alone. In the messages style use `ChatHeader(title:subtitle:)`.
+- Results as views: `Message(...).messageAttachment { AnySwiftUIView() }` puts a card in the thread (bare and full width in the assistant style); its controls are live.
+- Suggestions: `.chatInputSuggestions([ChatInputSuggestion(text:systemImage:)])` stacks chips above the field while nothing is typed and `.onChatInputSuggestionTap { suggestion in }` hands you the tap, which you send yourself. A `Message` with `.messageStyle(.suggestion)` is a dashed bubble in the thread; tapping it sends its text through the bar and it arrives in `onChatSend`, so remove the suggestion rows there and do not send again.
+- Turn-taking for an agent that texts in bubbles: `ChatAssistantTurns(exchange:deliver:shelve:fail:)` with `.chatAssistantTurns(turns)`, `typingUsers: turns.typingUsers(agent)`, and `turns.noteSent()` after appending the person's message. The dots wait 1.6 s after a send, the reply is held while the person is typing, a burst of messages becomes one `exchange`, a reply to a message since followed up goes to `shelve`, and lines are delivered one at a time. Timings are `ChatAssistantPacing`.
+
+```swift
+Chat(thread.messages, typingUsers: thread.working ? [agent] : []) { message in
+    if let result = message.result {
+        Message(message.text, role: message.role, timestamp: message.sentAt)
+            .messageAttachment { ResultCard(result) }
+    } else {
+        Message(message.text, role: message.role, timestamp: message.sentAt)
+    }
+}
+.chatStyle(.assistant)
+.chatTypingStatus(thread.status)
+.chatInputSuggestions(thread.messages.isEmpty ? thread.openers : [])
+.onChatInputSuggestionTap { suggestion in
+    thread.send(suggestion.text)
+}
+.onChatSend { text, media in
+    await thread.send(text, media)
+}
 ```
