@@ -17,9 +17,6 @@ Chat(thread.messages, typingUsers: thread.working ? [agent] : []) { message in
 .chatStyle(.assistant)
 .chatTypingStatus(thread.status)
 .chatInputSuggestions(thread.messages.isEmpty ? thread.openers : [])
-.onChatInputSuggestionTap { suggestion in
-    thread.send(suggestion.text)
-}
 .onChatSend { text, media in
     await thread.send(text, media)
 }
@@ -92,21 +89,20 @@ Controls inside the view are live. A photo the agent returns goes through `messa
 
 ## Offer the next message
 
-There are two kinds of suggestion, and both send a whole message on a tap.
+There are two kinds of suggestion. A tap on either sends a whole message the way the send button does: the bubble leaves from where the suggestion stood, travels to its place in the thread, and the words arrive in `onChatSend` with no media.
 
-**Above the input bar.** `chatInputSuggestions(_:)` stacks chips over the field while nothing is typed, each with an optional symbol. A tap reaches `onChatInputSuggestionTap`, and you send it. They suit an empty thread.
+**Above the input bar.** `chatInputSuggestions(_:)` stacks chips over the field while nothing is typed, each with an optional symbol. They suit an empty thread.
 
 ```swift
 .chatInputSuggestions([
     ChatInputSuggestion(text: "Find a table for four tonight", systemImage: "fork.knife"),
     ChatInputSuggestion(text: "What’s on my calendar tomorrow?", systemImage: "calendar"),
 ])
-.onChatInputSuggestionTap { suggestion in
-    thread.send(suggestion.text)
-}
 ```
 
-**In the thread.** A `Message` with `.messageStyle(.suggestion)` is drawn on the person’s side as a dashed outline with nothing said yet. A tap sends it through the input bar’s own send: the words fly up from the bar the way a typed message does and arrive in `onChatSend` with no media. They suit the end of a reply, where the agent knows what comes next. Add the rows after the reply and remove them when `onChatSend` fires. A suggestion row carries no tapbacks and no long-press menu, and in the assistant style it is never the message that rises to the top. Over a photo or a blurred screen, give the outline a surface with `chatSuggestionFill(_:)`.
+A chip that should do something other than send, fill the field or open a picker say, goes through `onChatInputSuggestionTap { suggestion in }`. With that handler set the tap is yours and nothing is sent for you.
+
+**In the thread.** A `Message` with `.messageStyle(.suggestion)` is drawn on the person’s side as a dashed outline with nothing said yet. They suit the end of a reply, where the agent knows what comes next. Add the rows after the reply and remove them when `onChatSend` fires. A suggestion row carries no tapbacks and no long-press menu, and in the assistant style it is never the message that rises to the top. Over a photo or a blurred screen, give the outline a surface with `chatSuggestionFill(_:)`.
 
 ## Take turns the way a person does
 

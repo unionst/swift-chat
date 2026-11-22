@@ -125,6 +125,13 @@ Attachments: `MessageMedia.image(url:width:height:blurhash:)` and `MessageMedia.
 | `chatInputBarHeight(_:)` | Resting height of the field |
 | `chatInputControlTint(_:)` | Send button fill |
 | `chatBubbleStyle(_:)` | Any `ShapeStyle` for outgoing bubbles; `.tint(_:)` also works |
+| `chatIncomingBubbleStyle(_:)` | Any `ShapeStyle` for the bubbles other people send; `chatIncomingBubbleTextColor(_:)` sets their words |
+| `chatBubbleShape(_:)` | Any `Shape` for every bubble in place of the rounded bubble and its tail, or a closure `{ bubble in … }` given `bubble.isFromMe` and `bubble.groupPosition` (`.alone`, `.first`, `.middle`, `.last`) |
+| `chatAvatar { role in }` | The avatar for a participant, answered once for the whole transcript |
+| `chatAvatarLayout(size:edge:showsOwnAvatar:)` | Avatar size (32 by default), `edge: .top` to stand it beside the first bubble of a run, `showsOwnAvatar: true` for an avatar beside the person's own messages (asked for through `chatAvatar` with `ChatRole.me`) |
+| `chatAttachmentActions(_:)` | Sources of your own beside Camera, Photos and Files |
+| `chatAttachmentMenuStyle(_:)` | `.menu` (default) or `.grid`: the plus button's sources as round buttons in a panel at the keyboard's height |
+| `chatInputPanel(isPresented:label:content:)` | A panel of your own in the keyboard's place, with its button beside the plus. Several calls give several panels |
 | `chatBubbleTailsHidden(_:)` | Hide tails |
 | `chatInputBarTint(_:)` | Translucent tint over the input bar's glass |
 | `chatHapticsDisabled(_:)` | No tap on incoming messages |
@@ -165,9 +172,6 @@ Chat(thread.messages, typingUsers: thread.working ? [agent] : []) { message in
 .chatStyle(.assistant)
 .chatTypingStatus(thread.status)
 .chatInputSuggestions(thread.messages.isEmpty ? thread.openers : [])
-.onChatInputSuggestionTap { suggestion in
-    thread.send(suggestion.text)
-}
 .onChatSend { text, media in
     await thread.send(text, media)
 }
@@ -175,7 +179,7 @@ Chat(thread.messages, typingUsers: thread.working ? [agent] : []) { message in
 
 - **Tool-call status.** Set the string behind `chatTypingStatus(_:)` at each tool call ("Checking your calendar", "Searching"); the old line rolls away. `nil` shows the spinner alone. It only shows while the agent's role is in `typingUsers`. In the messages style put it in `ChatHeader(title:subtitle:)`.
 - **Results as views.** `messageAttachment { }` puts any SwiftUI view in the thread as a message, with live controls: a booking, a chart, a form. Use a message with empty text for a card on its own.
-- **Suggestion chips.** `chatInputSuggestions([ChatInputSuggestion(text:systemImage:)])` stacks chips above the field while nothing is typed. The tap comes to `onChatInputSuggestionTap`; send it yourself.
+- **Suggestion chips.** `chatInputSuggestions([ChatInputSuggestion(text:systemImage:)])` stacks chips above the field while nothing is typed. A tap sends the chip the way the send button does and its text arrives in `onChatSend`. Set `onChatInputSuggestionTap` only to take the tap yourself, for a chip that fills the field or opens a picker.
 - **Suggestion bubbles.** A `Message` with `.messageStyle(.suggestion)` is a dashed outline on the person's side. A tap sends its text through the input bar and it arrives in `onChatSend`; remove the suggestion rows there.
 - **Turn-taking**, for an agent that texts in bubbles like a person:
 
@@ -216,5 +220,5 @@ Chat(thread.messages, typingUsers: thread.turns.typingUsers(coach)) { message in
 - `onChatSend` gives `media` as an array. Older docs showed a single optional; that is gone.
 - Use `chatMessageContextMenu` (data) for per-row menus; a SwiftUI `contextMenu` inside a hosted cell can swallow taps.
 - Keep message ids stable across renders, or rows lose their height and delivery label.
-- A chip from `chatInputSuggestions` is not sent for you: send it in `onChatInputSuggestionTap`. A tapped `.suggestion` row is sent for you and arrives in `onChatSend`: do not send it again from `onChatMessageTap`.
+- A chip from `chatInputSuggestions` and a tapped `.suggestion` row are both sent for you and arrive in `onChatSend`: do not send them again from `onChatInputSuggestionTap` or `onChatMessageTap`.
 - `import SwiftChat`. The older `import UnionChat` still compiles but is deprecated.

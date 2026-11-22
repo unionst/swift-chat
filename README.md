@@ -38,7 +38,7 @@ And for an agent:
 - **Streaming Markdown**: headings, lists, links, quotes, and code blocks, each word fading in as it arrives.
 - **A status line** beside the spinner that rolls from one tool call to the next: “Checking your calendar”, “Searching”.
 - **Results as views**: any SwiftUI view in the thread as a message, for a booking, a chart, or a form with live buttons.
-- **Suggestions**: chips above the input bar, and dashed bubbles in the thread that fly up and send on a tap.
+- **Suggestions**: chips above the input bar, and dashed bubbles in the thread. A tap sends either one, and its bubble leaves from where the suggestion stood.
 - **Turn-taking**: the dots wait a beat, the reply is held while you are still typing, and three messages in a row are answered once.
 
 ## Requirements
@@ -163,9 +163,6 @@ Chat(thread.messages, typingUsers: thread.working ? [agent] : []) { message in
 .chatStyle(.assistant)
 .chatTypingStatus(thread.status)
 .chatInputSuggestions(thread.messages.isEmpty ? thread.openers : [])
-.onChatInputSuggestionTap { suggestion in
-    thread.send(suggestion.text)
-}
 .onChatSend { text, media in
     await thread.send(text, media)
 }
@@ -176,7 +173,7 @@ That is the screen in the second recording at the top. Swift Chat has no model o
 - **Stream the reply** by appending one message and rewriting its text as tokens arrive. It renders as Markdown and grows in place.
 - **Say which step it is on** with `chatTypingStatus(_:)`. Set it at each tool call and the old line rolls away.
 - **Show a result** with `messageAttachment { }`, which puts any SwiftUI view in the thread, buttons included.
-- **Offer the next message** with `chatInputSuggestions(_:)` above the bar, or a `Message` with `.messageStyle(.suggestion)` in the thread.
+- **Offer the next message** with `chatInputSuggestions(_:)` above the bar, or a `Message` with `.messageStyle(.suggestion)` in the thread. A tap sends either one the way the send button does.
 - **Take turns** with `ChatAssistantTurns`, for an agent that texts like a person: it waits for you to stop typing, answers a burst of messages once, and never shows a reply to a message you have since followed up.
 
 [Agent chats](Documentation/agents.md) covers each of these, in the assistant style and in ordinary bubbles. To start from a working app, clone the [starter that streams Claude](https://github.com/unionst/swift-chat-ai-starter).
