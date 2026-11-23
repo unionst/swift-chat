@@ -8,6 +8,7 @@ enum Demo: String, CaseIterable, Identifiable {
     case tinted
     case empty
     case agent
+    case companion
 
     var id: String { rawValue }
 
@@ -20,6 +21,7 @@ enum Demo: String, CaseIterable, Identifiable {
         case .tinted: "Your colors"
         case .empty: "Empty state"
         case .agent: "Assistant"
+        case .companion: "Companion"
         }
     }
 
@@ -32,6 +34,7 @@ enum Demo: String, CaseIterable, Identifiable {
         case .tinted: "Outgoing bubbles in a brand color"
         case .empty: "What a new conversation shows before the first message"
         case .agent: "Your question rises to the top and the answer streams in beneath it"
+        case .companion: "Avatars on both sides, a bubble shape of your own, and a sticker panel"
         }
     }
 
@@ -44,6 +47,7 @@ enum Demo: String, CaseIterable, Identifiable {
         case .tinted: "paintpalette"
         case .empty: "bubble"
         case .agent: "sparkles"
+        case .companion: "pawprint"
         }
     }
 }

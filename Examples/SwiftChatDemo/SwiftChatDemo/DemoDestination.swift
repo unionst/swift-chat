@@ -13,6 +13,7 @@ struct DemoDestination: View {
             case .tinted: TintedDemo()
             case .empty: EmptyDemo()
             case .agent: AgentDemo()
+            case .companion: CompanionDemo()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
